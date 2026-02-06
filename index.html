@@ -3,216 +3,496 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OpenClaw Deploy</title>
+  <title>OpenClaw · Deploy Your Space Lobster</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect fill='%23ff4f40' x='5' y='3' width='6' height='8'/><rect fill='%23081016' x='6' y='5' width='1' height='1'/><rect fill='%23081016' x='9' y='5' width='1' height='1'/></svg>">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { 
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      color: #333;
+    
+    :root {
+      --claw-red: #ff4f40;
+      --claw-red-dark: #cc3f33;
+      --claw-red-glow: rgba(255,79,64,0.4);
+      --space-dark: #0a0a0f;
+      --space-darker: #050508;
+      --space-purple: #1a1a2e;
+      --space-blue: #16213e;
+      --nebula-pink: #e94560;
+      --nebula-purple: #7b2cbf;
+      --star-white: #f0f0ff;
+      --star-dim: #8888aa;
+      --success: #00ff88;
+      --warning: #ffaa00;
     }
-    .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+    
+    body { 
+      font-family: 'Space Grotesk', -apple-system, sans-serif;
+      background: var(--space-dark);
+      min-height: 100vh;
+      color: var(--star-white);
+      overflow-x: hidden;
+    }
+    
+    /* Starfield background */
+    .starfield {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: 
+        radial-gradient(ellipse at 20% 80%, rgba(123,44,191,0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(233,69,96,0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, var(--space-purple) 0%, var(--space-dark) 100%);
+      z-index: -1;
+    }
+    
+    .stars {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: 
+        radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+        radial-gradient(2px 2px at 160px 120px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 230px 80px, #fff, transparent),
+        radial-gradient(2px 2px at 300px 150px, rgba(255,255,255,0.7), transparent);
+      background-size: 350px 200px;
+      animation: twinkle 8s ease-in-out infinite;
+      z-index: -1;
+      opacity: 0.6;
+    }
+    
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 0.3; }
+    }
+    
+    .container { 
+      max-width: 640px; 
+      margin: 0 auto; 
+      padding: 40px 20px; 
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
     
     /* Cards */
     .card {
-      background: white;
-      border-radius: 16px;
-      padding: 32px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      margin-bottom: 20px;
+      background: linear-gradient(135deg, rgba(26,26,46,0.9) 0%, rgba(10,10,15,0.95) 100%);
+      border: 1px solid rgba(255,79,64,0.2);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 
+        0 0 60px rgba(255,79,64,0.1),
+        0 20px 60px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
     }
     
-    h1 { font-size: 28px; margin-bottom: 8px; }
-    h2 { font-size: 20px; margin-bottom: 16px; color: #667eea; }
-    p { color: #666; line-height: 1.6; margin-bottom: 16px; }
+    h1 { 
+      font-size: 32px; 
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--star-white) 0%, var(--claw-red) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    h2 { 
+      font-size: 20px; 
+      font-weight: 600;
+      color: var(--claw-red);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    p { 
+      color: var(--star-dim); 
+      line-height: 1.7; 
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
     
     /* Buttons */
     .btn {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       padding: 16px 32px;
       border-radius: 12px;
       font-size: 16px;
       font-weight: 600;
+      font-family: inherit;
       cursor: pointer;
       border: none;
-      transition: all 0.2s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       text-decoration: none;
     }
     .btn-primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, var(--claw-red) 0%, var(--claw-red-dark) 100%);
       color: white;
       width: 100%;
+      box-shadow: 0 4px 20px var(--claw-red-glow);
     }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(102,126,234,0.4); }
+    .btn-primary:hover { 
+      transform: translateY(-2px); 
+      box-shadow: 0 8px 30px var(--claw-red-glow);
+    }
     .btn-secondary {
-      background: #f0f0f0;
-      color: #333;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--star-dim);
       margin-top: 12px;
       width: 100%;
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.1);
+      color: var(--star-white);
     }
     
     /* Steps */
     .steps { display: none; }
-    .steps.active { display: block; }
+    .steps.active { display: block; animation: fadeIn 0.4s ease; }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
     
     .step-indicator {
       display: flex;
       justify-content: center;
       gap: 8px;
-      margin-bottom: 24px;
+      margin-bottom: 32px;
     }
     .step-dot {
-      width: 12px;
-      height: 12px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: #ddd;
+      background: rgba(255,255,255,0.2);
+      transition: all 0.3s;
     }
-    .step-dot.active { background: #667eea; }
-    .step-dot.done { background: #22c55e; }
+    .step-dot.active { 
+      background: var(--claw-red);
+      box-shadow: 0 0 10px var(--claw-red-glow);
+    }
+    .step-dot.done { background: var(--success); }
     
     /* Form elements */
-    .form-group { margin-bottom: 20px; }
-    label { display: block; font-weight: 600; margin-bottom: 8px; }
-    input, select {
+    .form-group { margin-bottom: 24px; }
+    label { 
+      display: block; 
+      font-weight: 500; 
+      margin-bottom: 8px;
+      color: var(--star-white);
+      font-size: 14px;
+    }
+    input, select, textarea {
       width: 100%;
-      padding: 14px;
-      border: 2px solid #e0e0e0;
+      padding: 14px 16px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
       border-radius: 10px;
-      font-size: 16px;
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--star-white);
+      transition: all 0.2s;
     }
-    input:focus, select:focus {
+    input:focus, select:focus, textarea:focus {
       outline: none;
-      border-color: #667eea;
+      border-color: var(--claw-red);
+      box-shadow: 0 0 0 3px var(--claw-red-glow);
     }
+    input::placeholder { color: var(--star-dim); }
+    select { cursor: pointer; }
+    select option { background: var(--space-dark); }
     
     /* Channel cards */
-    .channel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .channel-grid { 
+      display: grid; 
+      grid-template-columns: repeat(2, 1fr); 
+      gap: 12px; 
+      margin-bottom: 24px;
+    }
     .channel-card {
-      padding: 20px;
-      border: 2px solid #e0e0e0;
+      padding: 20px 16px;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 12px;
       text-align: center;
       cursor: pointer;
       transition: all 0.2s;
     }
-    .channel-card:hover { border-color: #667eea; }
-    .channel-card.selected { border-color: #667eea; background: #f0f4ff; }
-    .channel-card .icon { font-size: 32px; margin-bottom: 8px; }
-    .channel-card .name { font-weight: 600; }
-    
-    /* Progress */
-    .progress-bar {
-      height: 8px;
-      background: #e0e0e0;
-      border-radius: 4px;
-      overflow: hidden;
-      margin: 20px 0;
+    .channel-card:hover { 
+      border-color: rgba(255,79,64,0.3);
+      background: rgba(255,79,64,0.05);
     }
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #667eea, #764ba2);
-      width: 0%;
-      transition: width 0.5s;
+    .channel-card.selected { 
+      border-color: var(--claw-red);
+      background: rgba(255,79,64,0.1);
+      box-shadow: 0 0 20px var(--claw-red-glow);
+    }
+    .channel-card .icon { font-size: 28px; margin-bottom: 8px; }
+    .channel-card .name { font-weight: 600; font-size: 13px; }
+    .channel-card .status { 
+      font-size: 11px; 
+      color: var(--star-dim);
+      margin-top: 4px;
     }
     
     /* Skills */
-    .skill-list { margin-bottom: 20px; }
+    .skills-section { margin-bottom: 24px; }
+    .skills-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .skills-count {
+      font-size: 13px;
+      color: var(--star-dim);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .skill-grid {
+      display: grid;
+      gap: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+    .skill-grid::-webkit-scrollbar { width: 6px; }
+    .skill-grid::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 3px; }
+    .skill-grid::-webkit-scrollbar-thumb { background: var(--claw-red); border-radius: 3px; }
+    
     .skill-item {
       display: flex;
       align-items: center;
-      padding: 12px;
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      margin-bottom: 8px;
+      padding: 12px 14px;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px;
+      transition: all 0.2s;
     }
-    .skill-item .icon { font-size: 24px; margin-right: 12px; }
-    .skill-item .info { flex: 1; }
-    .skill-item .name { font-weight: 600; }
-    .skill-item .desc { font-size: 13px; color: #666; }
+    .skill-item:hover { border-color: rgba(255,255,255,0.1); }
+    .skill-item .icon { 
+      font-size: 20px; 
+      margin-right: 12px;
+      width: 28px;
+      text-align: center;
+    }
+    .skill-item .info { flex: 1; min-width: 0; }
+    .skill-item .name { 
+      font-weight: 600; 
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .skill-item .desc { 
+      font-size: 11px; 
+      color: var(--star-dim);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .toggle {
-      width: 48px;
-      height: 26px;
-      background: #ddd;
-      border-radius: 13px;
+      width: 40px;
+      height: 22px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 11px;
       cursor: pointer;
       position: relative;
+      flex-shrink: 0;
+      margin-left: 12px;
+      transition: all 0.2s;
     }
-    .toggle.on { background: #22c55e; }
+    .toggle.on { background: var(--claw-red); }
     .toggle::after {
       content: '';
       position: absolute;
-      width: 22px;
-      height: 22px;
+      width: 18px;
+      height: 18px;
       background: white;
       border-radius: 50%;
       top: 2px;
       left: 2px;
       transition: 0.2s;
     }
-    .toggle.on::after { left: 24px; }
+    .toggle.on::after { left: 20px; }
+    
+    /* Provider section */
+    .provider-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .provider-card {
+      padding: 16px 12px;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .provider-card:hover { border-color: rgba(255,79,64,0.3); }
+    .provider-card.selected { 
+      border-color: var(--claw-red);
+      background: rgba(255,79,64,0.1);
+    }
+    .provider-card .name { font-size: 12px; font-weight: 600; }
+    .provider-card .price { font-size: 10px; color: var(--star-dim); margin-top: 4px; }
+    
+    /* Progress */
+    .progress-container { margin: 32px 0; }
+    .progress-bar {
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--claw-red), var(--nebula-pink));
+      width: 0%;
+      transition: width 0.5s ease;
+      box-shadow: 0 0 10px var(--claw-red-glow);
+    }
+    .progress-status {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 14px;
+      color: var(--star-dim);
+    }
     
     /* Success */
     .success-icon {
       width: 80px;
       height: 80px;
-      background: #22c55e;
+      background: linear-gradient(135deg, var(--success), #00cc6a);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 20px;
-      font-size: 40px;
-      color: white;
+      margin: 0 auto 24px;
+      font-size: 36px;
+      box-shadow: 0 0 40px rgba(0,255,136,0.3);
     }
     
-    .bot-url {
-      background: #f5f5f5;
-      padding: 16px;
-      border-radius: 8px;
-      font-family: monospace;
+    .url-box {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 16px 20px;
+      border-radius: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
       word-break: break-all;
-      margin: 16px 0;
+      margin: 20px 0;
     }
+    .url-box .label { 
+      font-size: 11px; 
+      color: var(--star-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .url-box .url { color: var(--claw-red); }
     
     /* Logo */
     .logo {
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 24px;
+      margin-bottom: 32px;
+      gap: 16px;
     }
     .logo-icon {
-      width: 48px;
-      height: 48px;
-      background: #ff4444;
-      border-radius: 12px;
+      width: 56px;
+      height: 56px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
-      margin-right: 12px;
     }
-    .logo-text { font-size: 24px; font-weight: 700; }
+    .logo-icon svg { width: 100%; height: 100%; }
+    .logo-text { 
+      font-size: 28px; 
+      font-weight: 700;
+      letter-spacing: -1px;
+    }
+    .logo-text .claw { color: var(--claw-red); }
+    
+    /* Tagline */
+    .tagline {
+      text-align: center;
+      font-size: 13px;
+      color: var(--star-dim);
+      font-style: italic;
+      margin-top: 24px;
+      opacity: 0.7;
+    }
+    
+    /* Config preview */
+    .config-preview {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 16px;
+      margin: 20px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .config-preview code {
+      color: var(--star-dim);
+      white-space: pre-wrap;
+    }
+    .config-preview .key { color: var(--nebula-pink); }
+    .config-preview .string { color: var(--success); }
+    .config-preview .bool { color: var(--warning); }
+    
+    /* Responsive */
+    @media (max-width: 480px) {
+      .card { padding: 28px 20px; }
+      .channel-grid { grid-template-columns: 1fr 1fr; }
+      .provider-grid { grid-template-columns: 1fr 1fr; }
+    }
   </style>
 </head>
 <body>
+  <div class="starfield"></div>
+  <div class="stars"></div>
+  
   <div class="container">
     
     <!-- Step 0: Landing -->
     <div class="steps active" id="step-0">
       <div class="card">
         <div class="logo">
-          <div class="logo-icon">🦞</div>
-          <div class="logo-text">OpenClaw Deploy</div>
+          <div class="logo-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+              <g fill="#3a0a0d"><rect x="1" y="5" width="1" height="3"/><rect x="2" y="4" width="1" height="1"/><rect x="2" y="8" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/><rect x="3" y="9" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="4" y="10" width="1" height="1"/><rect x="5" y="2" width="6" height="1"/><rect x="11" y="2" width="1" height="1"/><rect x="12" y="3" width="1" height="1"/><rect x="12" y="9" width="1" height="1"/><rect x="13" y="4" width="1" height="1"/><rect x="13" y="8" width="1" height="1"/><rect x="14" y="5" width="1" height="3"/><rect x="5" y="11" width="6" height="1"/><rect x="4" y="12" width="1" height="1"/><rect x="11" y="12" width="1" height="1"/><rect x="3" y="13" width="1" height="1"/><rect x="12" y="13" width="1" height="1"/><rect x="5" y="14" width="6" height="1"/></g>
+              <g fill="#ff4f40"><rect x="5" y="3" width="6" height="1"/><rect x="4" y="4" width="8" height="1"/><rect x="3" y="5" width="10" height="1"/><rect x="3" y="6" width="10" height="1"/><rect x="3" y="7" width="10" height="1"/><rect x="4" y="8" width="8" height="1"/><rect x="5" y="9" width="6" height="1"/><rect x="5" y="12" width="6" height="1"/><rect x="6" y="13" width="4" height="1"/></g>
+              <g fill="#ff775f"><rect x="1" y="6" width="2" height="1"/><rect x="2" y="5" width="1" height="1"/><rect x="2" y="7" width="1" height="1"/><rect x="13" y="6" width="2" height="1"/><rect x="13" y="5" width="1" height="1"/><rect x="13" y="7" width="1" height="1"/></g>
+              <g fill="#081016"><rect x="6" y="5" width="1" height="1"/><rect x="9" y="5" width="1" height="1"/></g>
+              <g fill="#f5fbff"><rect x="6" y="4" width="1" height="1"/><rect x="9" y="4" width="1" height="1"/></g>
+            </svg>
+          </div>
+          <div class="logo-text">Open<span class="claw">Claw</span></div>
         </div>
-        <h1 style="text-align:center;">Your AI Assistant,<br>One Click Away</h1>
-        <p style="text-align:center;">Deploy a personal AI assistant that connects to Telegram or WhatsApp. No coding required.</p>
-        <button class="btn btn-primary" onclick="goTo(1)">Get Started →</button>
+        <h1 style="text-align:center;margin-bottom:12px;">Deploy Your Space Lobster</h1>
+        <p style="text-align:center;">Launch a personal AI agent that lives in WhatsApp, Telegram, Discord, or iMessage. No servers to manage.</p>
+        <button class="btn btn-primary" onclick="goTo(1)">
+          Begin Launch Sequence →
+        </button>
+        <p class="tagline">"EXFOLIATE! EXFOLIATE!" — A space lobster, probably</p>
       </div>
     </div>
     
-    <!-- Step 1: Name your bot -->
+    <!-- Step 1: Identity -->
     <div class="steps" id="step-1">
       <div class="card">
         <div class="step-indicator">
@@ -220,27 +500,34 @@
           <div class="step-dot"></div>
           <div class="step-dot"></div>
           <div class="step-dot"></div>
+          <div class="step-dot"></div>
         </div>
-        <h2>👋 Name Your Assistant</h2>
+        <h2>🦞 Agent Identity</h2>
+        <p>Give your space lobster a name and personality.</p>
         <div class="form-group">
-          <label>Assistant Name</label>
-          <input type="text" id="bot-name" placeholder="e.g., Jarvis, Friday, Alfred" value="Buddy">
+          <label>Agent Name</label>
+          <input type="text" id="agent-name" placeholder="e.g., Clawd, Friday, Jarvis" value="Clawd">
         </div>
         <div class="form-group">
-          <label>Personality</label>
+          <label>Avatar Emoji</label>
+          <input type="text" id="agent-emoji" placeholder="🦞" value="🦞" maxlength="4" style="width:80px;">
+        </div>
+        <div class="form-group">
+          <label>Personality Template</label>
           <select id="personality">
-            <option value="friendly">Friendly & Helpful</option>
-            <option value="professional">Professional & Concise</option>
-            <option value="funny">Funny & Casual</option>
-            <option value="grandpa">Patient & Simple (for seniors)</option>
+            <option value="helpful">Helpful & Capable (default)</option>
+            <option value="concise">Concise & Technical</option>
+            <option value="friendly">Friendly & Patient</option>
+            <option value="playful">Playful & Creative</option>
+            <option value="custom">Custom (edit SOUL.md later)</option>
           </select>
         </div>
-        <button class="btn btn-primary" onclick="goTo(2)">Next →</button>
+        <button class="btn btn-primary" onclick="goTo(2)">Next: Channels →</button>
         <button class="btn btn-secondary" onclick="goTo(0)">← Back</button>
       </div>
     </div>
     
-    <!-- Step 2: Choose channel -->
+    <!-- Step 2: Channels -->
     <div class="steps" id="step-2">
       <div class="card">
         <div class="step-indicator">
@@ -248,37 +535,46 @@
           <div class="step-dot active"></div>
           <div class="step-dot"></div>
           <div class="step-dot"></div>
+          <div class="step-dot"></div>
         </div>
-        <h2>📱 Connect a Messaging App</h2>
-        <p>Where should your assistant live?</p>
+        <h2>📡 Communication Channels</h2>
+        <p>Where should your agent receive messages?</p>
         <div class="channel-grid">
           <div class="channel-card selected" onclick="selectChannel(this, 'telegram')">
             <div class="icon">✈️</div>
             <div class="name">Telegram</div>
+            <div class="status">Bot API + grammY</div>
           </div>
           <div class="channel-card" onclick="selectChannel(this, 'whatsapp')">
             <div class="icon">💬</div>
             <div class="name">WhatsApp</div>
+            <div class="status">WhatsApp Web / Baileys</div>
           </div>
           <div class="channel-card" onclick="selectChannel(this, 'discord')">
             <div class="icon">🎮</div>
             <div class="name">Discord</div>
+            <div class="status">Bot API + channels.discord.js</div>
           </div>
-          <div class="channel-card" onclick="selectChannel(this, 'sms')">
-            <div class="icon">📲</div>
-            <div class="name">SMS</div>
+          <div class="channel-card" onclick="selectChannel(this, 'imessage')">
+            <div class="icon">🍎</div>
+            <div class="name">iMessage</div>
+            <div class="status">macOS imsg CLI</div>
           </div>
         </div>
-        <div id="telegram-setup">
-          <div class="form-group">
+        <div id="channel-config">
+          <div class="form-group" id="telegram-config">
             <label>Telegram Bot Token</label>
-            <input type="text" placeholder="Paste token from @BotFather">
-            <p style="font-size:13px;margin-top:8px;">
-              <a href="https://t.me/BotFather" target="_blank">Get token from @BotFather</a>
+            <input type="text" id="tg-token" placeholder="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11">
+            <p style="font-size:12px;margin-top:8px;margin-bottom:0;">
+              Get from <a href="https://t.me/BotFather" target="_blank" style="color:var(--claw-red);">@BotFather</a>
             </p>
           </div>
         </div>
-        <button class="btn btn-primary" onclick="goTo(3)">Next →</button>
+        <div class="form-group">
+          <label>Allowed Users (phone numbers or usernames)</label>
+          <input type="text" id="allow-from" placeholder="+15555550123, @username">
+        </div>
+        <button class="btn btn-primary" onclick="goTo(3)">Next: Skills →</button>
         <button class="btn btn-secondary" onclick="goTo(1)">← Back</button>
       </div>
     </div>
@@ -291,87 +587,169 @@
           <div class="step-dot done"></div>
           <div class="step-dot active"></div>
           <div class="step-dot"></div>
+          <div class="step-dot"></div>
         </div>
-        <h2>⚡ Choose Skills</h2>
-        <p>What should your assistant be able to do?</p>
-        <div class="skill-list">
-          <div class="skill-item">
-            <div class="icon">🌤️</div>
-            <div class="info">
-              <div class="name">Weather</div>
-              <div class="desc">Check forecasts and current weather</div>
-            </div>
-            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        <h2>⚡ Agent Skills</h2>
+        <p>Enable tools and integrations from ClawHub.</p>
+        <div class="skills-section">
+          <div class="skills-header">
+            <span>Popular Skills</span>
+            <span class="skills-count" id="skills-count">5 / 49 enabled</span>
           </div>
-          <div class="skill-item">
-            <div class="icon">📅</div>
-            <div class="info">
-              <div class="name">Calendar</div>
-              <div class="desc">Manage events and reminders</div>
+          <div class="skill-grid">
+            <div class="skill-item">
+              <div class="icon">🌤️</div>
+              <div class="info"><div class="name">weather</div><div class="desc">Current weather and forecasts</div></div>
+              <div class="toggle on" onclick="toggleSkill(this)"></div>
             </div>
-            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-          </div>
-          <div class="skill-item">
-            <div class="icon">🔍</div>
-            <div class="info">
-              <div class="name">Web Search</div>
-              <div class="desc">Search the internet for answers</div>
+            <div class="skill-item">
+              <div class="icon">🐙</div>
+              <div class="info"><div class="name">github</div><div class="desc">Issues, PRs, CI runs via gh CLI</div></div>
+              <div class="toggle on" onclick="toggleSkill(this)"></div>
             </div>
-            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-          </div>
-          <div class="skill-item">
-            <div class="icon">📧</div>
-            <div class="info">
-              <div class="name">Email</div>
-              <div class="desc">Send and read emails</div>
+            <div class="skill-item">
+              <div class="icon">📧</div>
+              <div class="info"><div class="name">himalaya</div><div class="desc">Email via IMAP/SMTP</div></div>
+              <div class="toggle on" onclick="toggleSkill(this)"></div>
             </div>
-            <div class="toggle" onclick="this.classList.toggle('on')"></div>
-          </div>
-          <div class="skill-item">
-            <div class="icon">🏠</div>
-            <div class="info">
-              <div class="name">Smart Home</div>
-              <div class="desc">Control lights, thermostat, etc.</div>
+            <div class="skill-item">
+              <div class="icon">🐦</div>
+              <div class="info"><div class="name">bird</div><div class="desc">X/Twitter read, search, post</div></div>
+              <div class="toggle" onclick="toggleSkill(this)"></div>
             </div>
-            <div class="toggle" onclick="this.classList.toggle('on')"></div>
+            <div class="skill-item">
+              <div class="icon">🗣️</div>
+              <div class="info"><div class="name">sag</div><div class="desc">ElevenLabs text-to-speech</div></div>
+              <div class="toggle" onclick="toggleSkill(this)"></div>
+            </div>
+            <div class="skill-item">
+              <div class="icon">📸</div>
+              <div class="info"><div class="name">camsnap</div><div class="desc">RTSP/ONVIF camera capture</div></div>
+              <div class="toggle" onclick="toggleSkill(this)"></div>
+            </div>
+            <div class="skill-item">
+              <div class="icon">💡</div>
+              <div class="info"><div class="name">openhue</div><div class="desc">Philips Hue lights control</div></div>
+              <div class="toggle" onclick="toggleSkill(this)"></div>
+            </div>
+            <div class="skill-item">
+              <div class="icon">🎵</div>
+              <div class="info"><div class="name">spotify-player</div><div class="desc">Spotify playback & search</div></div>
+              <div class="toggle on" onclick="toggleSkill(this)"></div>
+            </div>
+            <div class="skill-item">
+              <div class="icon">📰</div>
+              <div class="info"><div class="name">blogwatcher</div><div class="desc">Monitor RSS/Atom feeds</div></div>
+              <div class="toggle" onclick="toggleSkill(this)"></div>
+            </div>
+            <div class="skill-item">
+              <div class="icon">✅</div>
+              <div class="info"><div class="name">things-mac</div><div class="desc">Things 3 task management</div></div>
+              <div class="toggle on" onclick="toggleSkill(this)"></div>
+            </div>
+            <div class="skill-item">
+              <div class="icon">📋</div>
+              <div class="info"><div class="name">trello</div><div class="desc">Boards, lists, and cards</div></div>
+              <div class="toggle" onclick="toggleSkill(this)"></div>
+            </div>
+            <div class="skill-item">
+              <div class="icon">🔊</div>
+              <div class="info"><div class="name">sonoscli</div><div class="desc">Sonos speaker control</div></div>
+              <div class="toggle" onclick="toggleSkill(this)"></div>
+            </div>
           </div>
         </div>
-        <button class="btn btn-primary" onclick="deploy()">Deploy My Assistant 🚀</button>
+        <button class="btn btn-primary" onclick="goTo(4)">Next: Deploy →</button>
         <button class="btn btn-secondary" onclick="goTo(2)">← Back</button>
       </div>
     </div>
     
-    <!-- Step 4: Deploying -->
+    <!-- Step 4: Provider -->
     <div class="steps" id="step-4">
-      <div class="card" style="text-align:center;">
-        <h2>🚀 Deploying Your Assistant...</h2>
-        <div class="progress-bar">
-          <div class="progress-fill" id="deploy-progress"></div>
+      <div class="card">
+        <div class="step-indicator">
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div>
         </div>
-        <p id="deploy-status">Creating cloud instance...</p>
+        <h2>☁️ Cloud Provider</h2>
+        <p>Where should your lobster live?</p>
+        <div class="provider-grid">
+          <div class="provider-card selected" onclick="selectProvider(this, 'fly')">
+            <div class="name">Fly.io</div>
+            <div class="price">~$5/mo</div>
+          </div>
+          <div class="provider-card" onclick="selectProvider(this, 'railway')">
+            <div class="name">Railway</div>
+            <div class="price">~$5/mo</div>
+          </div>
+          <div class="provider-card" onclick="selectProvider(this, 'render')">
+            <div class="name">Render</div>
+            <div class="price">Free tier</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>AI Provider</label>
+          <select id="ai-provider">
+            <option value="anthropic">Anthropic Claude (recommended)</option>
+            <option value="openai">OpenAI GPT-4</option>
+            <option value="local">Local (Ollama)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>API Key</label>
+          <input type="password" id="api-key" placeholder="sk-ant-api03-...">
+        </div>
+        <div class="config-preview">
+          <code id="config-output">// Your config will appear here</code>
+        </div>
+        <button class="btn btn-primary" onclick="deploy()">🚀 Launch to Orbit</button>
+        <button class="btn btn-secondary" onclick="goTo(3)">← Back</button>
       </div>
     </div>
     
-    <!-- Step 5: Success -->
+    <!-- Step 5: Deploying -->
     <div class="steps" id="step-5">
       <div class="card" style="text-align:center;">
-        <div class="success-icon">✓</div>
-        <h2>🎉 Your Assistant is Live!</h2>
-        <p><strong id="final-name">Buddy</strong> is now ready to chat!</p>
+        <h2 style="justify-content:center;">🚀 Launching...</h2>
+        <p>Your space lobster is preparing for deployment.</p>
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill" id="deploy-progress"></div>
+          </div>
+          <div class="progress-status" id="deploy-status">Initializing...</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Step 6: Success -->
+    <div class="steps" id="step-6">
+      <div class="card" style="text-align:center;">
+        <div class="success-icon">🦞</div>
+        <h2 style="justify-content:center;">Mission Accomplished!</h2>
+        <p><strong id="final-name">Clawd</strong> is now orbiting and ready to receive transmissions.</p>
         
-        <div class="bot-url">
-          <strong>Dashboard:</strong><br>
-          https://buddy-abc123.openclaw.ai
+        <div class="url-box">
+          <div class="label">Dashboard</div>
+          <div class="url" id="dashboard-url">https://clawd-abc123.fly.dev</div>
         </div>
         
-        <p>Open Telegram and message your bot to get started.</p>
+        <div class="url-box">
+          <div class="label">Telegram Bot</div>
+          <div class="url">@ClawdBot</div>
+        </div>
         
-        <button class="btn btn-primary" onclick="window.open('https://t.me/BuddyBot')">
+        <p style="font-size:13px;">Send a message to start chatting with your agent.</p>
+        
+        <button class="btn btn-primary" onclick="window.open('https://t.me/ClawdBot')">
           Open Telegram →
         </button>
         <button class="btn btn-secondary" onclick="goTo(0)">
-          Create Another Bot
+          Deploy Another Lobster
         </button>
+        <p class="tagline">"We're all just playing with our own prompts."</p>
       </div>
     </div>
     
@@ -379,29 +757,77 @@
 
   <script>
     let currentStep = 0;
+    let selectedChannel = 'telegram';
+    let selectedProvider = 'fly';
+    let enabledSkills = new Set(['weather', 'github', 'himalaya', 'spotify-player', 'things-mac']);
     
     function goTo(step) {
       document.getElementById(`step-${currentStep}`).classList.remove('active');
       document.getElementById(`step-${step}`).classList.add('active');
       currentStep = step;
+      if (step === 4) updateConfigPreview();
     }
     
     function selectChannel(el, channel) {
       document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('selected'));
       el.classList.add('selected');
+      selectedChannel = channel;
+    }
+    
+    function selectProvider(el, provider) {
+      document.querySelectorAll('.provider-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedProvider = provider;
+    }
+    
+    function toggleSkill(el) {
+      el.classList.toggle('on');
+      updateSkillCount();
+    }
+    
+    function updateSkillCount() {
+      const total = document.querySelectorAll('.skill-item').length;
+      const enabled = document.querySelectorAll('.toggle.on').length;
+      document.getElementById('skills-count').textContent = `${enabled} / ${total} enabled`;
+    }
+    
+    function updateConfigPreview() {
+      const name = document.getElementById('agent-name').value || 'Clawd';
+      const emoji = document.getElementById('agent-emoji').value || '🦞';
+      const token = document.getElementById('tg-token').value || '<your-token>';
+      
+      const config = `{
+  <span class="key">"assistant"</span>: {
+    <span class="key">"name"</span>: <span class="string">"${name}"</span>,
+    <span class="key">"avatar"</span>: <span class="string">"${emoji}"</span>
+  },
+  <span class="key">"channels"</span>: {
+    <span class="key">"telegram"</span>: {
+      <span class="key">"token"</span>: <span class="string">"${token.substring(0,20)}..."</span>
+    }
+  },
+  <span class="key">"skills"</span>: {
+    <span class="key">"entries"</span>: {
+      <span class="key">"weather"</span>: { <span class="key">"enabled"</span>: <span class="bool">true</span> }
+    }
+  }
+}`;
+      document.getElementById('config-output').innerHTML = config;
     }
     
     function deploy() {
-      goTo(4);
+      goTo(5);
       const progress = document.getElementById('deploy-progress');
       const status = document.getElementById('deploy-status');
       
       const steps = [
-        { pct: 20, msg: 'Creating cloud instance...' },
-        { pct: 40, msg: 'Installing OpenClaw...' },
-        { pct: 60, msg: 'Configuring Telegram bot...' },
-        { pct: 80, msg: 'Setting up email account...' },
-        { pct: 100, msg: 'Finalizing...' },
+        { pct: 15, msg: 'Allocating cloud instance...' },
+        { pct: 30, msg: 'Installing OpenClaw runtime...' },
+        { pct: 45, msg: 'Configuring channels...' },
+        { pct: 60, msg: 'Loading skills...' },
+        { pct: 75, msg: 'Connecting to AI provider...' },
+        { pct: 90, msg: 'Running preflight checks...' },
+        { pct: 100, msg: 'Launching to orbit...' },
       ];
       
       let i = 0;
@@ -413,12 +839,14 @@
         } else {
           clearInterval(interval);
           setTimeout(() => {
-            document.getElementById('final-name').textContent = 
-              document.getElementById('bot-name').value || 'Buddy';
-            goTo(5);
+            const name = document.getElementById('agent-name').value || 'Clawd';
+            document.getElementById('final-name').textContent = name;
+            document.getElementById('dashboard-url').textContent = 
+              `https://${name.toLowerCase()}-${Math.random().toString(36).substr(2,6)}.fly.dev`;
+            goTo(6);
           }, 500);
         }
-      }, 800);
+      }, 700);
     }
   </script>
 </body>
