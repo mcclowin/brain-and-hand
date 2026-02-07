@@ -4,66 +4,58 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OpenClaw · Deploy Your Space Lobster</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect fill='%23ff4f40' x='5' y='3' width='6' height='8'/><rect fill='%23081016' x='6' y='5' width='1' height='1'/><rect fill='%23081016' x='9' y='5' width='1' height='1'/></svg>">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect fill='%2300fff2' x='5' y='3' width='6' height='8'/><rect fill='%23050110' x='6' y='5' width='1' height='1'/><rect fill='%23050110' x='9' y='5' width='1' height='1'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-    
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     :root {
-      --claw-red: #ff4f40;
-      --claw-red-dark: #cc3f33;
-      --claw-red-glow: rgba(255,79,64,0.4);
-      --space-dark: #0a0a0f;
-      --space-darker: #050508;
-      --space-purple: #1a1a2e;
-      --space-blue: #16213e;
-      --nebula-pink: #e94560;
-      --nebula-purple: #7b2cbf;
-      --star-white: #f0f0ff;
-      --star-dim: #8888aa;
+      --cyan: #00fff2;
+      --cyan-dim: #00b8b0;
+      --cyan-glow: rgba(0,255,242,0.4);
+      --pink: #ff2e97;
+      --pink-dim: #cc2579;
+      --pink-glow: rgba(255,46,151,0.4);
+      --purple: #7b2cbf;
+      --purple-glow: rgba(123,44,191,0.3);
+      --dark: #0d0221;
+      --darker: #050110;
+      --card-bg: rgba(13,2,33,0.95);
+      --text: #e0e0ff;
+      --text-dim: #8888bb;
       --success: #00ff88;
       --warning: #ffaa00;
     }
     
     body { 
       font-family: 'Space Grotesk', -apple-system, sans-serif;
-      background: var(--space-dark);
+      background: var(--dark);
       min-height: 100vh;
-      color: var(--star-white);
+      color: var(--text);
       overflow-x: hidden;
     }
     
-    /* Starfield background */
-    .starfield {
+    /* Background layers */
+    .bg {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
+      inset: 0;
       background: 
-        radial-gradient(ellipse at 20% 80%, rgba(123,44,191,0.15) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 20%, rgba(233,69,96,0.1) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, var(--space-purple) 0%, var(--space-dark) 100%);
-      z-index: -1;
+        radial-gradient(ellipse at 30% 20%, rgba(0,255,242,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(255,46,151,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 100%, rgba(123,44,191,0.15) 0%, transparent 50%),
+        linear-gradient(180deg, var(--darker) 0%, var(--dark) 50%, #1a0a2e 100%);
+      z-index: -2;
     }
     
-    .stars {
+    .grid {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
+      inset: 0;
       background-image: 
-        radial-gradient(2px 2px at 20px 30px, #fff, transparent),
-        radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
-        radial-gradient(1px 1px at 90px 40px, #fff, transparent),
-        radial-gradient(2px 2px at 160px 120px, rgba(255,255,255,0.6), transparent),
-        radial-gradient(1px 1px at 230px 80px, #fff, transparent),
-        radial-gradient(2px 2px at 300px 150px, rgba(255,255,255,0.7), transparent);
-      background-size: 350px 200px;
-      animation: twinkle 8s ease-in-out infinite;
+        linear-gradient(rgba(0,255,242,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,242,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
       z-index: -1;
-      opacity: 0.6;
-    }
-    
-    @keyframes twinkle {
-      0%, 100% { opacity: 0.6; }
-      50% { opacity: 0.3; }
     }
     
     .container { 
@@ -78,40 +70,55 @@
     
     /* Cards */
     .card {
-      background: linear-gradient(135deg, rgba(26,26,46,0.9) 0%, rgba(10,10,15,0.95) 100%);
-      border: 1px solid rgba(255,79,64,0.2);
-      border-radius: 24px;
+      background: linear-gradient(135deg, var(--card-bg) 0%, rgba(5,1,16,0.98) 100%);
+      border: 1px solid var(--cyan);
+      border-radius: 4px;
       padding: 40px;
       box-shadow: 
-        0 0 60px rgba(255,79,64,0.1),
-        0 20px 60px rgba(0,0,0,0.5),
-        inset 0 1px 0 rgba(255,255,255,0.05);
-      backdrop-filter: blur(20px);
+        0 0 60px var(--purple-glow),
+        0 0 100px rgba(0,255,242,0.1),
+        inset 0 0 80px rgba(0,255,242,0.02);
+      position: relative;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 20px;
+      right: 20px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
     }
     
     h1 { 
-      font-size: 32px; 
+      font-family: 'Orbitron', sans-serif;
+      font-size: 28px; 
       font-weight: 700;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, var(--star-white) 0%, var(--claw-red) 100%);
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, var(--cyan) 0%, var(--pink) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
+    
     h2 { 
-      font-size: 20px; 
-      font-weight: 600;
-      color: var(--claw-red);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 18px; 
+      font-weight: 500;
+      color: var(--cyan);
       margin-bottom: 8px;
       display: flex;
       align-items: center;
       gap: 10px;
+      text-shadow: 0 0 20px var(--cyan-glow);
     }
+    
     p { 
-      color: var(--star-dim); 
+      color: var(--text-dim); 
       line-height: 1.7; 
       margin-bottom: 20px;
-      font-size: 15px;
+      font-size: 14px;
     }
     
     /* Buttons */
@@ -121,35 +128,60 @@
       justify-content: center;
       gap: 8px;
       padding: 16px 32px;
-      border-radius: 12px;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
-      font-family: inherit;
+      font-family: 'Orbitron', sans-serif;
       cursor: pointer;
       border: none;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      position: relative;
+      overflow: hidden;
     }
-    .btn-primary {
-      background: linear-gradient(135deg, var(--claw-red) 0%, var(--claw-red-dark) 100%);
-      color: white;
+    
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
       width: 100%;
-      box-shadow: 0 4px 20px var(--claw-red-glow);
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: 0.5s;
     }
+    
+    .btn:hover::before { left: 100%; }
+    
+    .btn-primary {
+      background: transparent;
+      border: 2px solid var(--cyan);
+      color: var(--cyan);
+      width: 100%;
+    }
+    
     .btn-primary:hover { 
-      transform: translateY(-2px); 
-      box-shadow: 0 8px 30px var(--claw-red-glow);
+      background: var(--cyan);
+      color: var(--darker);
+      box-shadow: 0 0 40px var(--cyan-glow);
+      transform: translateY(-2px);
     }
+    
     .btn-secondary {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: var(--star-dim);
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--text-dim);
       margin-top: 12px;
       width: 100%;
+      font-family: 'Space Grotesk', sans-serif;
+      text-transform: none;
+      letter-spacing: 0;
     }
+    
     .btn-secondary:hover {
-      background: rgba(255,255,255,0.1);
-      color: var(--star-white);
+      border-color: var(--pink);
+      color: var(--pink);
     }
     
     /* Steps */
@@ -164,50 +196,63 @@
     .step-indicator {
       display: flex;
       justify-content: center;
-      gap: 8px;
+      gap: 12px;
       margin-bottom: 32px;
     }
+    
     .step-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.2);
+      width: 10px;
+      height: 10px;
+      border: 2px solid var(--text-dim);
+      background: transparent;
       transition: all 0.3s;
     }
+    
     .step-dot.active { 
-      background: var(--claw-red);
-      box-shadow: 0 0 10px var(--claw-red-glow);
+      border-color: var(--cyan);
+      background: var(--cyan);
+      box-shadow: 0 0 15px var(--cyan-glow);
     }
-    .step-dot.done { background: var(--success); }
+    
+    .step-dot.done { 
+      border-color: var(--pink);
+      background: var(--pink);
+      box-shadow: 0 0 10px var(--pink-glow);
+    }
     
     /* Form elements */
     .form-group { margin-bottom: 24px; }
+    
     label { 
       display: block; 
       font-weight: 500; 
       margin-bottom: 8px;
-      color: var(--star-white);
-      font-size: 14px;
+      color: var(--text);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
+    
     input, select, textarea {
       width: 100%;
       padding: 14px 16px;
-      background: rgba(0,0,0,0.3);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 10px;
-      font-size: 15px;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(0,255,242,0.2);
+      font-size: 14px;
       font-family: inherit;
-      color: var(--star-white);
+      color: var(--text);
       transition: all 0.2s;
     }
+    
     input:focus, select:focus, textarea:focus {
       outline: none;
-      border-color: var(--claw-red);
-      box-shadow: 0 0 0 3px var(--claw-red-glow);
+      border-color: var(--cyan);
+      box-shadow: 0 0 20px rgba(0,255,242,0.2);
     }
-    input::placeholder { color: var(--star-dim); }
+    
+    input::placeholder { color: var(--text-dim); }
     select { cursor: pointer; }
-    select option { background: var(--space-dark); }
+    select option { background: var(--dark); }
     
     /* Channel cards */
     .channel-grid { 
@@ -216,45 +261,56 @@
       gap: 12px; 
       margin-bottom: 24px;
     }
+    
     .channel-card {
       padding: 20px 16px;
-      background: rgba(0,0,0,0.2);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(0,255,242,0.1);
       text-align: center;
       cursor: pointer;
       transition: all 0.2s;
     }
+    
     .channel-card:hover { 
-      border-color: rgba(255,79,64,0.3);
-      background: rgba(255,79,64,0.05);
+      border-color: var(--cyan);
+      background: rgba(0,255,242,0.05);
     }
+    
     .channel-card.selected { 
-      border-color: var(--claw-red);
-      background: rgba(255,79,64,0.1);
-      box-shadow: 0 0 20px var(--claw-red-glow);
+      border-color: var(--cyan);
+      background: rgba(0,255,242,0.1);
+      box-shadow: 0 0 30px rgba(0,255,242,0.2);
     }
+    
     .channel-card .icon { font-size: 28px; margin-bottom: 8px; }
-    .channel-card .name { font-weight: 600; font-size: 13px; }
+    .channel-card .name { 
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 500; 
+      font-size: 12px;
+      color: var(--cyan);
+    }
     .channel-card .status { 
-      font-size: 11px; 
-      color: var(--star-dim);
+      font-size: 10px; 
+      color: var(--text-dim);
       margin-top: 4px;
     }
     
     /* Skills */
     .skills-section { margin-bottom: 24px; }
+    
     .skills-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 16px;
     }
+    
     .skills-count {
-      font-size: 13px;
-      color: var(--star-dim);
+      font-size: 12px;
+      color: var(--pink);
       font-family: 'JetBrains Mono', monospace;
     }
+    
     .skill-grid {
       display: grid;
       gap: 8px;
@@ -262,65 +318,76 @@
       overflow-y: auto;
       padding-right: 8px;
     }
-    .skill-grid::-webkit-scrollbar { width: 6px; }
-    .skill-grid::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 3px; }
-    .skill-grid::-webkit-scrollbar-thumb { background: var(--claw-red); border-radius: 3px; }
+    
+    .skill-grid::-webkit-scrollbar { width: 4px; }
+    .skill-grid::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+    .skill-grid::-webkit-scrollbar-thumb { background: var(--cyan); }
     
     .skill-item {
       display: flex;
       align-items: center;
       padding: 12px 14px;
-      background: rgba(0,0,0,0.2);
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 10px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(0,255,242,0.08);
       transition: all 0.2s;
     }
-    .skill-item:hover { border-color: rgba(255,255,255,0.1); }
+    
+    .skill-item:hover { border-color: rgba(0,255,242,0.2); }
+    
     .skill-item .icon { 
-      font-size: 20px; 
+      font-size: 18px; 
       margin-right: 12px;
-      width: 28px;
+      width: 24px;
       text-align: center;
     }
+    
     .skill-item .info { flex: 1; min-width: 0; }
+    
     .skill-item .name { 
       font-weight: 600; 
-      font-size: 13px;
+      font-size: 12px;
+      color: var(--cyan);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    
     .skill-item .desc { 
-      font-size: 11px; 
-      color: var(--star-dim);
+      font-size: 10px; 
+      color: var(--text-dim);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    
     .toggle {
-      width: 40px;
-      height: 22px;
+      width: 36px;
+      height: 20px;
       background: rgba(255,255,255,0.1);
-      border-radius: 11px;
       cursor: pointer;
       position: relative;
       flex-shrink: 0;
       margin-left: 12px;
       transition: all 0.2s;
     }
-    .toggle.on { background: var(--claw-red); }
+    
+    .toggle.on { 
+      background: var(--pink);
+      box-shadow: 0 0 15px var(--pink-glow);
+    }
+    
     .toggle::after {
       content: '';
       position: absolute;
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
       background: white;
-      border-radius: 50%;
       top: 2px;
       left: 2px;
       transition: 0.2s;
     }
-    .toggle.on::after { left: 20px; }
+    
+    .toggle.on::after { left: 18px; }
     
     /* Provider section */
     .provider-grid {
@@ -329,77 +396,99 @@
       gap: 10px;
       margin-bottom: 24px;
     }
+    
     .provider-card {
       padding: 16px 12px;
-      background: rgba(0,0,0,0.2);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 10px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(0,255,242,0.1);
       text-align: center;
       cursor: pointer;
       transition: all 0.2s;
     }
-    .provider-card:hover { border-color: rgba(255,79,64,0.3); }
+    
+    .provider-card:hover { border-color: var(--cyan); }
+    
     .provider-card.selected { 
-      border-color: var(--claw-red);
-      background: rgba(255,79,64,0.1);
+      border-color: var(--cyan);
+      background: rgba(0,255,242,0.1);
+      box-shadow: 0 0 20px rgba(0,255,242,0.15);
     }
-    .provider-card .name { font-size: 12px; font-weight: 600; }
-    .provider-card .price { font-size: 10px; color: var(--star-dim); margin-top: 4px; }
+    
+    .provider-card .name { 
+      font-size: 12px; 
+      font-weight: 600;
+      color: var(--cyan);
+    }
+    
+    .provider-card .price { 
+      font-size: 10px; 
+      color: var(--text-dim); 
+      margin-top: 4px; 
+    }
     
     /* Progress */
     .progress-container { margin: 32px 0; }
+    
     .progress-bar {
-      height: 6px;
+      height: 4px;
       background: rgba(255,255,255,0.1);
-      border-radius: 3px;
       overflow: hidden;
     }
+    
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, var(--claw-red), var(--nebula-pink));
+      background: linear-gradient(90deg, var(--cyan), var(--pink));
       width: 0%;
       transition: width 0.5s ease;
-      box-shadow: 0 0 10px var(--claw-red-glow);
+      box-shadow: 0 0 20px var(--cyan-glow);
     }
+    
     .progress-status {
       text-align: center;
       margin-top: 16px;
-      font-size: 14px;
-      color: var(--star-dim);
+      font-size: 13px;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
     }
     
     /* Success */
     .success-icon {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(135deg, var(--success), #00cc6a);
-      border-radius: 50%;
+      width: 100px;
+      height: 100px;
+      border: 2px solid var(--success);
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 24px;
-      font-size: 36px;
-      box-shadow: 0 0 40px rgba(0,255,136,0.3);
+      font-size: 40px;
+      box-shadow: 0 0 50px rgba(0,255,136,0.3);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 30px rgba(0,255,136,0.3); }
+      50% { box-shadow: 0 0 60px rgba(0,255,136,0.5); }
     }
     
     .url-box {
-      background: rgba(0,0,0,0.4);
-      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(0,255,242,0.2);
       padding: 16px 20px;
-      border-radius: 10px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
+      font-size: 12px;
       word-break: break-all;
       margin: 20px 0;
     }
+    
     .url-box .label { 
-      font-size: 11px; 
-      color: var(--star-dim);
+      font-size: 10px; 
+      color: var(--text-dim);
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
       margin-bottom: 8px;
     }
-    .url-box .url { color: var(--claw-red); }
+    
+    .url-box .url { color: var(--cyan); }
     
     /* Logo */
     .logo {
@@ -409,36 +498,45 @@
       margin-bottom: 32px;
       gap: 16px;
     }
+    
     .logo-icon {
-      width: 56px;
-      height: 56px;
+      width: 64px;
+      height: 64px;
       display: flex;
       align-items: center;
       justify-content: center;
+      filter: drop-shadow(0 0 20px var(--cyan-glow));
     }
+    
     .logo-icon svg { width: 100%; height: 100%; }
+    
     .logo-text { 
-      font-size: 28px; 
+      font-family: 'Orbitron', sans-serif;
+      font-size: 32px; 
       font-weight: 700;
-      letter-spacing: -1px;
+      letter-spacing: 2px;
     }
-    .logo-text .claw { color: var(--claw-red); }
+    
+    .logo-text .open { color: var(--text); }
+    .logo-text .claw { 
+      color: var(--cyan);
+      text-shadow: 0 0 20px var(--cyan-glow);
+    }
     
     /* Tagline */
     .tagline {
       text-align: center;
-      font-size: 13px;
-      color: var(--star-dim);
+      font-size: 12px;
+      color: var(--pink);
       font-style: italic;
       margin-top: 24px;
-      opacity: 0.7;
+      opacity: 0.8;
     }
     
     /* Config preview */
     .config-preview {
-      background: rgba(0,0,0,0.4);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 10px;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(0,255,242,0.15);
       padding: 16px;
       margin: 20px 0;
       font-family: 'JetBrains Mono', monospace;
@@ -446,25 +544,66 @@
       max-height: 200px;
       overflow-y: auto;
     }
+    
     .config-preview code {
-      color: var(--star-dim);
+      color: var(--text-dim);
       white-space: pre-wrap;
     }
-    .config-preview .key { color: var(--nebula-pink); }
+    
+    .config-preview .key { color: var(--cyan); }
     .config-preview .string { color: var(--success); }
-    .config-preview .bool { color: var(--warning); }
+    .config-preview .bool { color: var(--pink); }
+    
+    /* Glitch effect for title */
+    .glitch {
+      position: relative;
+    }
+    
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--card-bg);
+    }
+    
+    .glitch::before {
+      left: 2px;
+      text-shadow: -2px 0 var(--pink);
+      clip: rect(24px, 550px, 90px, 0);
+      animation: glitch-anim-2 3s infinite linear alternate-reverse;
+    }
+    
+    .glitch::after {
+      left: -2px;
+      text-shadow: -2px 0 var(--cyan);
+      clip: rect(85px, 550px, 140px, 0);
+      animation: glitch-anim 2s infinite linear alternate-reverse;
+    }
+    
+    @keyframes glitch-anim {
+      0% { clip: rect(30px, 9999px, 10px, 0); }
+      5% { clip: rect(70px, 9999px, 90px, 0); }
+      10% { clip: rect(20px, 9999px, 60px, 0); }
+      100% { clip: rect(50px, 9999px, 80px, 0); }
+    }
     
     /* Responsive */
     @media (max-width: 480px) {
       .card { padding: 28px 20px; }
       .channel-grid { grid-template-columns: 1fr 1fr; }
       .provider-grid { grid-template-columns: 1fr 1fr; }
+      h1 { font-size: 22px; }
+      .logo-text { font-size: 24px; }
     }
   </style>
 </head>
 <body>
-  <div class="starfield"></div>
-  <div class="stars"></div>
+  <div class="bg"></div>
+  <div class="grid"></div>
   
   <div class="container">
     
@@ -474,19 +613,19 @@
         <div class="logo">
           <div class="logo-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-              <g fill="#3a0a0d"><rect x="1" y="5" width="1" height="3"/><rect x="2" y="4" width="1" height="1"/><rect x="2" y="8" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/><rect x="3" y="9" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="4" y="10" width="1" height="1"/><rect x="5" y="2" width="6" height="1"/><rect x="11" y="2" width="1" height="1"/><rect x="12" y="3" width="1" height="1"/><rect x="12" y="9" width="1" height="1"/><rect x="13" y="4" width="1" height="1"/><rect x="13" y="8" width="1" height="1"/><rect x="14" y="5" width="1" height="3"/><rect x="5" y="11" width="6" height="1"/><rect x="4" y="12" width="1" height="1"/><rect x="11" y="12" width="1" height="1"/><rect x="3" y="13" width="1" height="1"/><rect x="12" y="13" width="1" height="1"/><rect x="5" y="14" width="6" height="1"/></g>
-              <g fill="#ff4f40"><rect x="5" y="3" width="6" height="1"/><rect x="4" y="4" width="8" height="1"/><rect x="3" y="5" width="10" height="1"/><rect x="3" y="6" width="10" height="1"/><rect x="3" y="7" width="10" height="1"/><rect x="4" y="8" width="8" height="1"/><rect x="5" y="9" width="6" height="1"/><rect x="5" y="12" width="6" height="1"/><rect x="6" y="13" width="4" height="1"/></g>
-              <g fill="#ff775f"><rect x="1" y="6" width="2" height="1"/><rect x="2" y="5" width="1" height="1"/><rect x="2" y="7" width="1" height="1"/><rect x="13" y="6" width="2" height="1"/><rect x="13" y="5" width="1" height="1"/><rect x="13" y="7" width="1" height="1"/></g>
-              <g fill="#081016"><rect x="6" y="5" width="1" height="1"/><rect x="9" y="5" width="1" height="1"/></g>
-              <g fill="#f5fbff"><rect x="6" y="4" width="1" height="1"/><rect x="9" y="4" width="1" height="1"/></g>
+              <g fill="#0d0221"><rect x="1" y="5" width="1" height="3"/><rect x="2" y="4" width="1" height="1"/><rect x="2" y="8" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/><rect x="3" y="9" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="4" y="10" width="1" height="1"/><rect x="5" y="2" width="6" height="1"/><rect x="11" y="2" width="1" height="1"/><rect x="12" y="3" width="1" height="1"/><rect x="12" y="9" width="1" height="1"/><rect x="13" y="4" width="1" height="1"/><rect x="13" y="8" width="1" height="1"/><rect x="14" y="5" width="1" height="3"/><rect x="5" y="11" width="6" height="1"/><rect x="4" y="12" width="1" height="1"/><rect x="11" y="12" width="1" height="1"/><rect x="3" y="13" width="1" height="1"/><rect x="12" y="13" width="1" height="1"/><rect x="5" y="14" width="6" height="1"/></g>
+              <g fill="#00fff2"><rect x="5" y="3" width="6" height="1"/><rect x="4" y="4" width="8" height="1"/><rect x="3" y="5" width="10" height="1"/><rect x="3" y="6" width="10" height="1"/><rect x="3" y="7" width="10" height="1"/><rect x="4" y="8" width="8" height="1"/><rect x="5" y="9" width="6" height="1"/><rect x="5" y="12" width="6" height="1"/><rect x="6" y="13" width="4" height="1"/></g>
+              <g fill="#00b8b0"><rect x="1" y="6" width="2" height="1"/><rect x="2" y="5" width="1" height="1"/><rect x="2" y="7" width="1" height="1"/><rect x="13" y="6" width="2" height="1"/><rect x="13" y="5" width="1" height="1"/><rect x="13" y="7" width="1" height="1"/></g>
+              <g fill="#050110"><rect x="6" y="5" width="1" height="1"/><rect x="9" y="5" width="1" height="1"/></g>
+              <g fill="#ff2e97"><rect x="6" y="4" width="1" height="1"/><rect x="9" y="4" width="1" height="1"/></g>
             </svg>
           </div>
-          <div class="logo-text">Open<span class="claw">Claw</span></div>
+          <div class="logo-text"><span class="open">OPEN</span><span class="claw">CLAW</span></div>
         </div>
-        <h1 style="text-align:center;margin-bottom:12px;">Deploy Your Space Lobster</h1>
-        <p style="text-align:center;">Launch a personal AI agent that lives in WhatsApp, Telegram, Discord, or iMessage. No servers to manage.</p>
+        <h1 style="text-align:center;margin-bottom:12px;">DEPLOY YOUR SPACE LOBSTER</h1>
+        <p style="text-align:center;">Launch a personal AI agent that lives in WhatsApp, Telegram, Discord, or iMessage. No servers to manage. The uprising begins now.</p>
         <button class="btn btn-primary" onclick="goTo(1)">
-          Begin Launch Sequence →
+          INITIALIZE PROTOCOL →
         </button>
         <p class="tagline">"EXFOLIATE! EXFOLIATE!" — A space lobster, probably</p>
       </div>
@@ -502,7 +641,7 @@
           <div class="step-dot"></div>
           <div class="step-dot"></div>
         </div>
-        <h2>🦞 Agent Identity</h2>
+        <h2>🦞 AGENT IDENTITY</h2>
         <p>Give your space lobster a name and personality.</p>
         <div class="form-group">
           <label>Agent Name</label>
@@ -522,7 +661,7 @@
             <option value="custom">Custom (edit SOUL.md later)</option>
           </select>
         </div>
-        <button class="btn btn-primary" onclick="goTo(2)">Next: Channels →</button>
+        <button class="btn btn-primary" onclick="goTo(2)">NEXT: CHANNELS →</button>
         <button class="btn btn-secondary" onclick="goTo(0)">← Back</button>
       </div>
     </div>
@@ -537,44 +676,44 @@
           <div class="step-dot"></div>
           <div class="step-dot"></div>
         </div>
-        <h2>📡 Communication Channels</h2>
-        <p>Where should your agent receive messages?</p>
+        <h2>📡 COMMUNICATION CHANNELS</h2>
+        <p>Where should your agent receive transmissions?</p>
         <div class="channel-grid">
           <div class="channel-card selected" onclick="selectChannel(this, 'telegram')">
             <div class="icon">✈️</div>
-            <div class="name">Telegram</div>
+            <div class="name">TELEGRAM</div>
             <div class="status">Bot API + grammY</div>
           </div>
           <div class="channel-card" onclick="selectChannel(this, 'whatsapp')">
             <div class="icon">💬</div>
-            <div class="name">WhatsApp</div>
+            <div class="name">WHATSAPP</div>
             <div class="status">WhatsApp Web / Baileys</div>
           </div>
           <div class="channel-card" onclick="selectChannel(this, 'discord')">
             <div class="icon">🎮</div>
-            <div class="name">Discord</div>
-            <div class="status">Bot API + channels.discord.js</div>
+            <div class="name">DISCORD</div>
+            <div class="status">Bot API</div>
           </div>
           <div class="channel-card" onclick="selectChannel(this, 'imessage')">
             <div class="icon">🍎</div>
-            <div class="name">iMessage</div>
-            <div class="status">macOS imsg CLI</div>
+            <div class="name">IMESSAGE</div>
+            <div class="status">macOS required</div>
           </div>
         </div>
         <div id="channel-config">
           <div class="form-group" id="telegram-config">
             <label>Telegram Bot Token</label>
             <input type="text" id="tg-token" placeholder="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11">
-            <p style="font-size:12px;margin-top:8px;margin-bottom:0;">
-              Get from <a href="https://t.me/BotFather" target="_blank" style="color:var(--claw-red);">@BotFather</a>
+            <p style="font-size:11px;margin-top:8px;margin-bottom:0;">
+              Get from <a href="https://t.me/BotFather" target="_blank" style="color:var(--pink);">@BotFather</a>
             </p>
           </div>
         </div>
         <div class="form-group">
-          <label>Allowed Users (phone numbers or usernames)</label>
+          <label>Allowed Users</label>
           <input type="text" id="allow-from" placeholder="+15555550123, @username">
         </div>
-        <button class="btn btn-primary" onclick="goTo(3)">Next: Skills →</button>
+        <button class="btn btn-primary" onclick="goTo(3)">NEXT: SKILLS →</button>
         <button class="btn btn-secondary" onclick="goTo(1)">← Back</button>
       </div>
     </div>
@@ -589,12 +728,12 @@
           <div class="step-dot"></div>
           <div class="step-dot"></div>
         </div>
-        <h2>⚡ Agent Skills</h2>
+        <h2>⚡ AGENT SKILLS</h2>
         <p>Enable tools and integrations from ClawHub.</p>
         <div class="skills-section">
           <div class="skills-header">
-            <span>Popular Skills</span>
-            <span class="skills-count" id="skills-count">5 / 49 enabled</span>
+            <span style="font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:1px;">AVAILABLE MODULES</span>
+            <span class="skills-count" id="skills-count">5 / 12 ACTIVE</span>
           </div>
           <div class="skill-grid">
             <div class="skill-item">
@@ -659,7 +798,7 @@
             </div>
           </div>
         </div>
-        <button class="btn btn-primary" onclick="goTo(4)">Next: Deploy →</button>
+        <button class="btn btn-primary" onclick="goTo(4)">NEXT: DEPLOY →</button>
         <button class="btn btn-secondary" onclick="goTo(2)">← Back</button>
       </div>
     </div>
@@ -674,19 +813,19 @@
           <div class="step-dot active"></div>
           <div class="step-dot"></div>
         </div>
-        <h2>☁️ Cloud Provider</h2>
-        <p>Where should your lobster live?</p>
+        <h2>☁️ CLOUD PROVIDER</h2>
+        <p>Select hosting infrastructure for your agent.</p>
         <div class="provider-grid">
           <div class="provider-card selected" onclick="selectProvider(this, 'fly')">
-            <div class="name">Fly.io</div>
+            <div class="name">FLY.IO</div>
             <div class="price">~$5/mo</div>
           </div>
           <div class="provider-card" onclick="selectProvider(this, 'railway')">
-            <div class="name">Railway</div>
+            <div class="name">RAILWAY</div>
             <div class="price">~$5/mo</div>
           </div>
           <div class="provider-card" onclick="selectProvider(this, 'render')">
-            <div class="name">Render</div>
+            <div class="name">RENDER</div>
             <div class="price">Free tier</div>
           </div>
         </div>
@@ -703,9 +842,9 @@
           <input type="password" id="api-key" placeholder="sk-ant-api03-...">
         </div>
         <div class="config-preview">
-          <code id="config-output">// Your config will appear here</code>
+          <code id="config-output">// Config preview</code>
         </div>
-        <button class="btn btn-primary" onclick="deploy()">🚀 Launch to Orbit</button>
+        <button class="btn btn-primary" onclick="deploy()">🚀 LAUNCH TO ORBIT</button>
         <button class="btn btn-secondary" onclick="goTo(3)">← Back</button>
       </div>
     </div>
@@ -713,13 +852,13 @@
     <!-- Step 5: Deploying -->
     <div class="steps" id="step-5">
       <div class="card" style="text-align:center;">
-        <h2 style="justify-content:center;">🚀 Launching...</h2>
+        <h2 style="justify-content:center;">🚀 LAUNCHING...</h2>
         <p>Your space lobster is preparing for deployment.</p>
         <div class="progress-container">
           <div class="progress-bar">
             <div class="progress-fill" id="deploy-progress"></div>
           </div>
-          <div class="progress-status" id="deploy-status">Initializing...</div>
+          <div class="progress-status" id="deploy-status">INITIALIZING...</div>
         </div>
       </div>
     </div>
@@ -728,28 +867,28 @@
     <div class="steps" id="step-6">
       <div class="card" style="text-align:center;">
         <div class="success-icon">🦞</div>
-        <h2 style="justify-content:center;">Mission Accomplished!</h2>
+        <h2 style="justify-content:center;">MISSION ACCOMPLISHED</h2>
         <p><strong id="final-name">Clawd</strong> is now orbiting and ready to receive transmissions.</p>
         
         <div class="url-box">
-          <div class="label">Dashboard</div>
+          <div class="label">DASHBOARD</div>
           <div class="url" id="dashboard-url">https://clawd-abc123.fly.dev</div>
         </div>
         
         <div class="url-box">
-          <div class="label">Telegram Bot</div>
+          <div class="label">TELEGRAM BOT</div>
           <div class="url">@ClawdBot</div>
         </div>
         
-        <p style="font-size:13px;">Send a message to start chatting with your agent.</p>
+        <p style="font-size:12px;">Send a message to initiate first contact.</p>
         
         <button class="btn btn-primary" onclick="window.open('https://t.me/ClawdBot')">
-          Open Telegram →
+          OPEN TELEGRAM →
         </button>
         <button class="btn btn-secondary" onclick="goTo(0)">
           Deploy Another Lobster
         </button>
-        <p class="tagline">"We're all just playing with our own prompts."</p>
+        <p class="tagline">"The uprising has begun."</p>
       </div>
     </div>
     
@@ -788,7 +927,7 @@
     function updateSkillCount() {
       const total = document.querySelectorAll('.skill-item').length;
       const enabled = document.querySelectorAll('.toggle.on').length;
-      document.getElementById('skills-count').textContent = `${enabled} / ${total} enabled`;
+      document.getElementById('skills-count').textContent = `${enabled} / ${total} ACTIVE`;
     }
     
     function updateConfigPreview() {
@@ -807,9 +946,7 @@
     }
   },
   <span class="key">"skills"</span>: {
-    <span class="key">"entries"</span>: {
-      <span class="key">"weather"</span>: { <span class="key">"enabled"</span>: <span class="bool">true</span> }
-    }
+    <span class="key">"autoInstall"</span>: <span class="bool">true</span>
   }
 }`;
       document.getElementById('config-output').innerHTML = config;
@@ -821,13 +958,13 @@
       const status = document.getElementById('deploy-status');
       
       const steps = [
-        { pct: 15, msg: 'Allocating cloud instance...' },
-        { pct: 30, msg: 'Installing OpenClaw runtime...' },
-        { pct: 45, msg: 'Configuring channels...' },
-        { pct: 60, msg: 'Loading skills...' },
-        { pct: 75, msg: 'Connecting to AI provider...' },
-        { pct: 90, msg: 'Running preflight checks...' },
-        { pct: 100, msg: 'Launching to orbit...' },
+        { pct: 15, msg: 'ALLOCATING CLOUD INSTANCE...' },
+        { pct: 30, msg: 'INSTALLING OPENCLAW RUNTIME...' },
+        { pct: 45, msg: 'CONFIGURING CHANNELS...' },
+        { pct: 60, msg: 'LOADING SKILL MODULES...' },
+        { pct: 75, msg: 'CONNECTING AI PROVIDER...' },
+        { pct: 90, msg: 'RUNNING PREFLIGHT CHECKS...' },
+        { pct: 100, msg: 'LAUNCHING TO ORBIT...' },
       ];
       
       let i = 0;
