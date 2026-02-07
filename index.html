@@ -103,7 +103,7 @@
       margin-bottom: 8px;
     }
     
-    input, select {
+    input, select, textarea {
       width: 100%;
       padding: 14px 16px;
       background: var(--bg);
@@ -115,12 +115,17 @@
       transition: border-color 0.2s;
     }
     
-    input:focus, select:focus {
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    
+    input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: var(--primary);
     }
     
-    input::placeholder { color: #999; }
+    input::placeholder, textarea::placeholder { color: #999; }
     
     select {
       cursor: pointer;
@@ -136,10 +141,80 @@
       margin-top: 6px;
     }
     
-    .help-text a {
-      color: var(--primary);
-      text-decoration: none;
+    /* Avatar picker */
+    .avatar-section {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      margin-bottom: 24px;
     }
+    
+    .avatar-preview {
+      width: 80px;
+      height: 80px;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    
+    .avatar-options {
+      flex: 1;
+    }
+    
+    .avatar-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+    
+    .avatar-option {
+      width: 100%;
+      aspect-ratio: 1;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .avatar-option:hover { border-color: #ccc; transform: scale(1.05); }
+    .avatar-option.selected { border-color: var(--primary); background: rgba(37,99,235,0.08); }
+    
+    /* Personality cards */
+    .personality-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .personality-card {
+      padding: 16px;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+    
+    .personality-card:hover { border-color: #ccc; }
+    .personality-card.selected { border-color: var(--primary); background: rgba(37,99,235,0.04); }
+    
+    .personality-emoji { font-size: 1.5rem; margin-bottom: 6px; }
+    .personality-name { font-size: 0.9rem; font-weight: 600; }
+    .personality-desc { font-size: 0.75rem; color: var(--text-light); margin-top: 2px; }
     
     /* Options (radio-style) */
     .options { display: grid; gap: 10px; margin-bottom: 24px; }
@@ -184,10 +259,8 @@
     
     .option.selected .option-check::after { content: '✓'; }
     
-    /* Toggle list (for connections/skills) */
-    .toggle-section {
-      margin-bottom: 24px;
-    }
+    /* Toggle list */
+    .toggle-section { margin-bottom: 24px; }
     
     .toggle-section-title {
       font-size: 0.8rem;
@@ -200,10 +273,7 @@
       border-bottom: 1px solid var(--border);
     }
     
-    .toggle-list {
-      display: grid;
-      gap: 8px;
-    }
+    .toggle-list { display: grid; gap: 8px; }
     
     .toggle-item {
       display: flex;
@@ -309,20 +379,19 @@
     /* Success */
     .success { text-align: center; padding: 16px 0; }
     
-    .success-icon {
-      width: 72px;
-      height: 72px;
-      background: var(--success);
+    .success-avatar {
+      width: 88px;
+      height: 88px;
+      background: var(--primary);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 20px;
-      font-size: 32px;
-      color: white;
+      font-size: 44px;
     }
     
-    .success h1 { color: var(--success); }
+    .success h1 { color: var(--text); margin-bottom: 4px; }
     
     .bot-card {
       background: var(--bg);
@@ -359,9 +428,9 @@
     .logo svg { width: 32px; height: 32px; }
     .logo-text { font-size: 1.1rem; font-weight: 700; }
     
-    /* Scrollable area */
+    /* Scroll area */
     .scroll-area {
-      max-height: 320px;
+      max-height: 300px;
       overflow-y: auto;
       margin: 0 -8px;
       padding: 0 8px;
@@ -371,17 +440,57 @@
     .scroll-area::-webkit-scrollbar-track { background: transparent; }
     .scroll-area::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
     
+    /* Live preview */
+    .preview-bubble {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      margin: 20px 0;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    
+    .preview-avatar {
+      width: 40px;
+      height: 40px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    
+    .preview-content {
+      flex: 1;
+    }
+    
+    .preview-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+    
+    .preview-message {
+      font-size: 0.85rem;
+      color: var(--text-light);
+    }
+    
     @media (max-width: 480px) {
       html { font-size: 16px; }
       .container { padding: 32px 16px; }
       .card { padding: 24px 20px; }
+      .avatar-grid { grid-template-columns: repeat(5, 1fr); }
     }
   </style>
 </head>
 <body>
   <div class="container">
     
-    <!-- Step 1: Name -->
+    <!-- Step 1: Identity -->
     <div class="step active" id="step-1">
       <div class="logo">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
@@ -400,16 +509,46 @@
         <div class="progress-step"></div>
         <div class="progress-step"></div>
         <div class="progress-step"></div>
+        <div class="progress-step"></div>
       </div>
       
       <div class="card">
-        <div class="step-label">Step 1 of 5</div>
-        <h1>Name your assistant</h1>
-        <p class="description">Give your AI a name. It will use this when introducing itself.</p>
+        <div class="step-label">Step 1 of 6</div>
+        <h1>Create your assistant</h1>
+        <p class="description">Give your AI a name and pick an avatar.</p>
+        
+        <div class="avatar-section">
+          <div class="avatar-preview" id="avatar-preview">🤖</div>
+          <div class="avatar-options">
+            <label>Choose an avatar</label>
+            <div class="avatar-grid">
+              <div class="avatar-option selected" onclick="selectAvatar(this, '🤖')">🤖</div>
+              <div class="avatar-option" onclick="selectAvatar(this, '🦊')">🦊</div>
+              <div class="avatar-option" onclick="selectAvatar(this, '🐱')">🐱</div>
+              <div class="avatar-option" onclick="selectAvatar(this, '🦉')">🦉</div>
+              <div class="avatar-option" onclick="selectAvatar(this, '🐙')">🐙</div>
+              <div class="avatar-option" onclick="selectAvatar(this, '🦋')">🦋</div>
+              <div class="avatar-option" onclick="selectAvatar(this, '🌟')">🌟</div>
+              <div class="avatar-option" onclick="selectAvatar(this, '🔮')">🔮</div>
+              <div class="avatar-option" onclick="selectAvatar(this, '🎯')">🎯</div>
+              <div class="avatar-option" onclick="selectAvatar(this, '💎')">💎</div>
+              <div class="avatar-option" onclick="selectAvatar(this, '🚀')">🚀</div>
+              <div class="avatar-option" onclick="selectAvatar(this, '🦞')">🦞</div>
+            </div>
+          </div>
+        </div>
         
         <div class="form-group">
-          <label>Assistant name</label>
-          <input type="text" id="bot-name" placeholder="e.g. Friday, Max, Luna">
+          <label>What's your assistant's name?</label>
+          <input type="text" id="bot-name" placeholder="e.g. Friday, Max, Luna" oninput="updatePreview()">
+        </div>
+        
+        <div class="preview-bubble">
+          <div class="preview-avatar" id="preview-avatar">🤖</div>
+          <div class="preview-content">
+            <div class="preview-name" id="preview-name">Your Assistant</div>
+            <div class="preview-message">Hi! I'm here to help you. What can I do for you today?</div>
+          </div>
         </div>
         
         <div class="buttons">
@@ -418,7 +557,7 @@
       </div>
     </div>
     
-    <!-- Step 2: Channel -->
+    <!-- Step 2: Personality -->
     <div class="step" id="step-2">
       <div class="logo">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
@@ -437,10 +576,75 @@
         <div class="progress-step"></div>
         <div class="progress-step"></div>
         <div class="progress-step"></div>
+        <div class="progress-step"></div>
       </div>
       
       <div class="card">
-        <div class="step-label">Step 2 of 5</div>
+        <div class="step-label">Step 2 of 6</div>
+        <h1>Personality & purpose</h1>
+        <p class="description">How should your assistant behave?</p>
+        
+        <label>Pick a personality</label>
+        <div class="personality-grid">
+          <div class="personality-card selected" onclick="selectPersonality(this, 'friendly')">
+            <div class="personality-emoji">😊</div>
+            <div class="personality-name">Friendly</div>
+            <div class="personality-desc">Warm and helpful</div>
+          </div>
+          <div class="personality-card" onclick="selectPersonality(this, 'professional')">
+            <div class="personality-emoji">💼</div>
+            <div class="personality-name">Professional</div>
+            <div class="personality-desc">Formal and precise</div>
+          </div>
+          <div class="personality-card" onclick="selectPersonality(this, 'witty')">
+            <div class="personality-emoji">😄</div>
+            <div class="personality-name">Witty</div>
+            <div class="personality-desc">Clever and fun</div>
+          </div>
+          <div class="personality-card" onclick="selectPersonality(this, 'concise')">
+            <div class="personality-emoji">⚡</div>
+            <div class="personality-name">Concise</div>
+            <div class="personality-desc">Brief and direct</div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>What's their mission? <span style="color: var(--text-light); font-weight: 400;">(optional)</span></label>
+          <textarea id="mission" placeholder="e.g. Help me stay organized and remind me of important things"></textarea>
+          <div class="help-text">Describe what you want your assistant to focus on</div>
+        </div>
+        
+        <div class="buttons">
+          <button class="btn btn-primary" onclick="goTo(3)">Continue</button>
+          <button class="btn btn-secondary" onclick="goTo(1)">← Back</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Step 3: Channel -->
+    <div class="step" id="step-3">
+      <div class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+          <rect fill="#2563eb" x="5" y="3" width="6" height="7"/>
+          <rect fill="#fff" x="6" y="5" width="1" height="1"/>
+          <rect fill="#fff" x="9" y="5" width="1" height="1"/>
+          <rect fill="#1d4ed8" x="5" y="11" width="2" height="2"/>
+          <rect fill="#1d4ed8" x="9" y="11" width="2" height="2"/>
+        </svg>
+        <span class="logo-text">OpenClaw</span>
+      </div>
+      
+      <div class="progress">
+        <div class="progress-step done"></div>
+        <div class="progress-step done"></div>
+        <div class="progress-step done"></div>
+        <div class="progress-step"></div>
+        <div class="progress-step"></div>
+        <div class="progress-step"></div>
+      </div>
+      
+      <div class="card">
+        <div class="step-label">Step 3 of 6</div>
         <h1>Where to chat?</h1>
         <p class="description">Pick the app you want to use to talk to your assistant.</p>
         
@@ -472,14 +676,14 @@
         </div>
         
         <div class="buttons">
-          <button class="btn btn-primary" onclick="goTo(3)">Continue</button>
-          <button class="btn btn-secondary" onclick="goTo(1)">← Back</button>
+          <button class="btn btn-primary" onclick="goTo(4)">Continue</button>
+          <button class="btn btn-secondary" onclick="goTo(2)">← Back</button>
         </div>
       </div>
     </div>
     
-    <!-- Step 3: Email & Connections -->
-    <div class="step" id="step-3">
+    <!-- Step 4: Connections -->
+    <div class="step" id="step-4">
       <div class="logo">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
           <rect fill="#2563eb" x="5" y="3" width="6" height="7"/>
@@ -495,14 +699,15 @@
         <div class="progress-step done"></div>
         <div class="progress-step done"></div>
         <div class="progress-step done"></div>
+        <div class="progress-step done"></div>
         <div class="progress-step"></div>
         <div class="progress-step"></div>
       </div>
       
       <div class="card">
-        <div class="step-label">Step 3 of 5</div>
+        <div class="step-label">Step 4 of 6</div>
         <h1>Connect accounts</h1>
-        <p class="description">Let your assistant access your apps. You can skip this and set it up later.</p>
+        <p class="description">Let your assistant access your apps. You can skip this.</p>
         
         <div class="scroll-area">
           <div class="toggle-section">
@@ -589,15 +794,15 @@
         </div>
         
         <div class="buttons">
-          <button class="btn btn-primary" onclick="goTo(4)">Continue</button>
-          <button class="btn btn-text" onclick="goTo(4)">Skip for now</button>
-          <button class="btn btn-secondary" onclick="goTo(2)">← Back</button>
+          <button class="btn btn-primary" onclick="goTo(5)">Continue</button>
+          <button class="btn btn-text" onclick="goTo(5)">Skip for now</button>
+          <button class="btn btn-secondary" onclick="goTo(3)">← Back</button>
         </div>
       </div>
     </div>
     
-    <!-- Step 4: Skills -->
-    <div class="step" id="step-4">
+    <!-- Step 5: Skills -->
+    <div class="step" id="step-5">
       <div class="logo">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
           <rect fill="#2563eb" x="5" y="3" width="6" height="7"/>
@@ -614,13 +819,14 @@
         <div class="progress-step done"></div>
         <div class="progress-step done"></div>
         <div class="progress-step done"></div>
+        <div class="progress-step done"></div>
         <div class="progress-step"></div>
       </div>
       
       <div class="card">
-        <div class="step-label">Step 4 of 5</div>
+        <div class="step-label">Step 5 of 6</div>
         <h1>Add skills</h1>
-        <p class="description">Choose what your assistant can do. Popular ones are already selected.</p>
+        <p class="description">What should your assistant be able to do?</p>
         
         <div class="scroll-area">
           <div class="toggle-section">
@@ -646,7 +852,7 @@
                 <div class="icon">📍</div>
                 <div class="info">
                   <div class="name">Places</div>
-                  <div class="desc">Find restaurants, shops nearby</div>
+                  <div class="desc">Find restaurants, shops</div>
                 </div>
                 <div class="toggle-switch"></div>
               </div>
@@ -729,14 +935,14 @@
         </div>
         
         <div class="buttons">
-          <button class="btn btn-primary" onclick="goTo(5)">Create assistant</button>
-          <button class="btn btn-secondary" onclick="goTo(3)">← Back</button>
+          <button class="btn btn-primary" onclick="goTo(6)">Create assistant</button>
+          <button class="btn btn-secondary" onclick="goTo(4)">← Back</button>
         </div>
       </div>
     </div>
     
-    <!-- Step 5: Creating -->
-    <div class="step" id="step-5">
+    <!-- Step 6: Creating -->
+    <div class="step" id="step-6">
       <div class="logo">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
           <rect fill="#2563eb" x="5" y="3" width="6" height="7"/>
@@ -754,6 +960,7 @@
         <div class="progress-step done"></div>
         <div class="progress-step done"></div>
         <div class="progress-step done"></div>
+        <div class="progress-step done"></div>
       </div>
       
       <div class="card">
@@ -764,8 +971,8 @@
       </div>
     </div>
     
-    <!-- Step 6: Done -->
-    <div class="step" id="step-6">
+    <!-- Step 7: Done -->
+    <div class="step" id="step-7">
       <div class="logo">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
           <rect fill="#2563eb" x="5" y="3" width="6" height="7"/>
@@ -779,12 +986,12 @@
       
       <div class="card">
         <div class="success">
-          <div class="success-icon">✓</div>
-          <h1>You're all set!</h1>
-          <p class="description"><strong id="final-name">Your assistant</strong> is ready to help you.</p>
+          <div class="success-avatar" id="final-avatar">🤖</div>
+          <h1 id="final-name">Your assistant</h1>
+          <p class="description">is ready to help you!</p>
           
           <div class="bot-card">
-            <div class="bot-card-label">Your assistant on <span id="channel-label">Telegram</span></div>
+            <div class="bot-card-label">Chat on <span id="channel-label">Telegram</span></div>
             <div class="bot-card-value" id="bot-handle">@FridayBot</div>
           </div>
           
@@ -804,6 +1011,8 @@
 
   <script>
     let currentStep = 1;
+    let selectedAvatar = '🤖';
+    let selectedPersonality = 'friendly';
     let selectedChannel = 'telegram';
     
     const channelLabels = {
@@ -817,7 +1026,21 @@
       document.getElementById(`step-${step}`).classList.add('active');
       currentStep = step;
       
-      if (step === 5) createAssistant();
+      if (step === 6) createAssistant();
+    }
+    
+    function selectAvatar(el, emoji) {
+      document.querySelectorAll('.avatar-option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedAvatar = emoji;
+      document.getElementById('avatar-preview').textContent = emoji;
+      document.getElementById('preview-avatar').textContent = emoji;
+    }
+    
+    function selectPersonality(el, personality) {
+      document.querySelectorAll('.personality-card').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedPersonality = personality;
     }
     
     function selectChannel(el, channel) {
@@ -830,13 +1053,19 @@
       el.classList.toggle('on');
     }
     
+    function updatePreview() {
+      const name = document.getElementById('bot-name').value || 'Your Assistant';
+      document.getElementById('preview-name').textContent = name;
+    }
+    
     function createAssistant() {
       const loadingText = document.getElementById('loading-text');
-      const name = document.getElementById('bot-name').value || 'Your assistant';
+      const name = document.getElementById('bot-name').value || 'Your Assistant';
       
       const messages = [
         'Setting up ' + name + '...',
-        'Configuring connections...',
+        'Configuring personality...',
+        'Connecting accounts...',
         'Installing skills...',
         'Almost ready...'
       ];
@@ -850,11 +1079,12 @@
           clearInterval(interval);
           finishSetup(name);
         }
-      }, 900);
+      }, 800);
     }
     
     function finishSetup(name) {
       document.getElementById('final-name').textContent = name;
+      document.getElementById('final-avatar').textContent = selectedAvatar;
       document.getElementById('channel-label').textContent = channelLabels[selectedChannel];
       
       const handle = '@' + name.replace(/\s+/g, '') + 'Bot';
@@ -864,7 +1094,7 @@
         document.getElementById('open-link').href = 'https://t.me/' + handle.slice(1);
       }
       
-      goTo(6);
+      goTo(7);
     }
   </script>
 </body>
