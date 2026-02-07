@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>clawd · spawn your ai bestie</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦞</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --bg: #fafafa;
+      --card: #ffffff;
+      --text: #1a1a1a;
+      --text-dim: #666;
+      --accent: #ff6b35;
+      --accent-light: #fff0eb;
+      --purple: #8b5cf6;
+      --pink: #ec4899;
+      --green: #10b981;
+      --blue: #3b82f6;
+      --border: #e5e5e5;
+      --shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 20px;
+    }
+    .logo-emoji { font-size: 28px; }
+    .logo span { color: var(--accent); }
+    .header-actions { display: flex; gap: 12px; }
+    
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+    .btn-primary:hover { 
+      background: #e55a2b;
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { background: #f5f5f5; }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-dim);
+    }
+    .btn-ghost:hover { color: var(--text); }
+    .btn-large {
+      padding: 16px 32px;
+      font-size: 16px;
+      border-radius: 16px;
+    }
+    .btn-full { width: 100%; }
+    
+    /* Pages */
+    .page { display: none; min-height: calc(100vh - 65px); }
+    .page.active { display: block; animation: fadeIn 0.3s ease; }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Landing */
+    .landing {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 24px;
+      min-height: calc(100vh - 65px);
+      background: linear-gradient(180deg, #fff 0%, #fef3f0 100%);
+    }
+    .landing-emoji { font-size: 80px; margin-bottom: 24px; }
+    .landing h1 {
+      font-size: 48px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, var(--accent), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .landing p {
+      font-size: 18px;
+      color: var(--text-dim);
+      max-width: 400px;
+      margin-bottom: 32px;
+    }
+    .social-login {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 320px;
+    }
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 14px 24px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .social-btn:hover { 
+      border-color: var(--accent);
+      box-shadow: var(--shadow);
+    }
+    .social-btn img { width: 20px; height: 20px; }
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: var(--text-dim);
+      font-size: 13px;
+      margin: 16px 0;
+      width: 100%;
+      max-width: 320px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    
+    /* Dashboard */
+    .dashboard {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+    .welcome {
+      text-align: center;
+      padding: 48px 0;
+    }
+    .welcome h2 {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .welcome p { color: var(--text-dim); }
+    
+    /* Create Bot Card */
+    .create-card {
+      background: linear-gradient(135deg, var(--accent), var(--pink));
+      border-radius: 24px;
+      padding: 32px;
+      color: white;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 32px;
+    }
+    .create-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 12px 40px rgba(255,107,53,0.3);
+    }
+    .create-card .icon { font-size: 48px; margin-bottom: 16px; }
+    .create-card h3 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .create-card p { opacity: 0.9; }
+    
+    /* Setup Wizard */
+    .wizard {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+    .wizard-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .wizard-header h2 {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .wizard-header p { color: var(--text-dim); }
+    
+    .progress-steps {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .progress-step {
+      width: 40px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+    .progress-step.active { background: var(--accent); }
+    .progress-step.done { background: var(--green); }
+    
+    /* Form */
+    .form-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+    .form-section-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+    }
+    .form-group { margin-bottom: 20px; }
+    .form-group:last-child { margin-bottom: 0; }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 15px;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: white;
+    }
+    textarea { resize: vertical; min-height: 100px; }
+    .input-with-emoji {
+      display: flex;
+      gap: 12px;
+    }
+    .emoji-input {
+      width: 60px;
+      text-align: center;
+      font-size: 24px;
+    }
+    .char-count {
+      text-align: right;
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+    
+    /* Avatar Preview */
+    .avatar-section {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .avatar-preview {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--accent), var(--pink));
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      flex-shrink: 0;
+    }
+    .avatar-actions { flex: 1; }
+    .avatar-actions p { 
+      font-size: 13px; 
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+    
+    /* Channel Toggles */
+    .channel-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .channel-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .channel-option:hover { border-color: #ccc; }
+    .channel-option.selected {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+    .channel-option .icon { font-size: 24px; }
+    .channel-option .info { flex: 1; }
+    .channel-option .name { font-weight: 600; font-size: 14px; }
+    .channel-option .status { font-size: 12px; color: var(--text-dim); }
+    .channel-option .check {
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 14px;
+    }
+    .channel-option.selected .check {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    
+    /* Skills */
+    .skill-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .skill-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .skill-chip:hover { border-color: #ccc; }
+    .skill-chip.selected {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+    .skill-chip .emoji { font-size: 14px; }
+    
+    /* Personality */
+    .personality-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .personality-option {
+      padding: 14px;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .personality-option:hover { border-color: #ccc; }
+    .personality-option.selected {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+    .personality-option .emoji { font-size: 24px; margin-bottom: 4px; }
+    .personality-option .name { font-weight: 600; font-size: 13px; }
+    
+    /* Nav Buttons */
+    .wizard-nav {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .wizard-nav .btn { flex: 1; }
+    
+    /* Deploy Animation */
+    .deploying {
+      text-align: center;
+      padding: 60px 24px;
+    }
+    .deploying-emoji {
+      font-size: 64px;
+      animation: bounce 1s infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .deploying h2 { margin: 24px 0 12px; font-size: 24px; }
+    .deploying p { color: var(--text-dim); margin-bottom: 24px; }
+    .progress-bar {
+      width: 100%;
+      max-width: 300px;
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--pink));
+      border-radius: 4px;
+      width: 0%;
+      transition: width 0.5s;
+    }
+    .deploy-status {
+      margin-top: 16px;
+      font-size: 14px;
+      color: var(--text-dim);
+    }
+    
+    /* Success */
+    .success {
+      text-align: center;
+      padding: 60px 24px;
+    }
+    .success-emoji { font-size: 80px; margin-bottom: 24px; }
+    .success h2 { 
+      font-size: 32px; 
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .success p { color: var(--text-dim); margin-bottom: 32px; }
+    .bot-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 400px;
+      margin: 0 auto 24px;
+      text-align: left;
+    }
+    .bot-card-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .bot-card-avatar {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--accent), var(--pink));
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+    .bot-card-info h3 { font-weight: 700; }
+    .bot-card-info p { font-size: 13px; color: var(--text-dim); }
+    .bot-card-links {
+      display: flex;
+      gap: 8px;
+    }
+    .bot-link {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px;
+      background: var(--bg);
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.2s;
+    }
+    .bot-link:hover { background: var(--border); }
+    
+    /* Responsive */
+    @media (max-width: 600px) {
+      .landing h1 { font-size: 36px; }
+      .channel-grid { grid-template-columns: 1fr; }
+      .personality-options { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <span class="logo-emoji">🦞</span>
+      <div>claw<span>d</span></div>
+    </div>
+    <div class="header-actions" id="header-actions">
+      <!-- Dynamic: Login or User menu -->
+    </div>
+  </header>
+
+  <!-- Landing Page -->
+  <div class="page active" id="page-landing">
+    <div class="landing">
+      <div class="landing-emoji">🦞</div>
+      <h1>spawn your ai bestie</h1>
+      <p>create a personal ai that lives in your dms. no code needed.</p>
+      <div class="social-login">
+        <button class="social-btn" onclick="login()">
+          <img src="https://www.google.com/favicon.ico" alt=""> Continue with Google
+        </button>
+        <button class="social-btn" onclick="login()">
+          <img src="https://abs.twimg.com/favicons/twitter.3.ico" alt=""> Continue with X
+        </button>
+      </div>
+      <div class="divider">or</div>
+      <button class="btn btn-secondary btn-full" style="max-width:320px" onclick="login()">
+        📧 Sign up with email
+      </button>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="page" id="page-dashboard">
+    <div class="dashboard">
+      <div class="welcome">
+        <h2>gm, friend 👋</h2>
+        <p>ready to spawn your first ai?</p>
+      </div>
+      
+      <div class="create-card" onclick="startWizard()">
+        <div class="icon">✨</div>
+        <h3>create new bot</h3>
+        <p>takes about 2 minutes</p>
+      </div>
+      
+      <p style="text-align:center;color:var(--text-dim);font-size:14px;">
+        or <a href="#" style="color:var(--accent);">import existing bot</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Wizard Step 1: Identity -->
+  <div class="page" id="page-step1">
+    <div class="wizard">
+      <div class="progress-steps">
+        <div class="progress-step active"></div>
+        <div class="progress-step"></div>
+        <div class="progress-step"></div>
+        <div class="progress-step"></div>
+      </div>
+      
+      <div class="wizard-header">
+        <h2>name your bot 🏷️</h2>
+        <p>give it a vibe check</p>
+      </div>
+      
+      <div class="form-section">
+        <div class="form-group">
+          <label>what's their name?</label>
+          <div class="input-with-emoji">
+            <input type="text" class="emoji-input" id="bot-emoji" value="🦞" maxlength="2">
+            <input type="text" id="bot-name" placeholder="e.g. clawdy, jarvis, bestie" value="">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <div class="avatar-section">
+            <div class="avatar-preview" id="avatar-preview">🦞</div>
+            <div class="avatar-actions">
+              <p>click to generate a custom avatar</p>
+              <button class="btn btn-secondary" onclick="generateAvatar()">✨ generate avatar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-section">
+        <div class="form-section-title">personality</div>
+        <div class="personality-options">
+          <div class="personality-option selected" onclick="selectPersonality(this)">
+            <div class="emoji">😊</div>
+            <div class="name">friendly</div>
+          </div>
+          <div class="personality-option" onclick="selectPersonality(this)">
+            <div class="emoji">🧠</div>
+            <div class="name">smart</div>
+          </div>
+          <div class="personality-option" onclick="selectPersonality(this)">
+            <div class="emoji">😂</div>
+            <div class="name">funny</div>
+          </div>
+          <div class="personality-option" onclick="selectPersonality(this)">
+            <div class="emoji">🎯</div>
+            <div class="name">direct</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="wizard-nav">
+        <button class="btn btn-secondary" onclick="showPage('page-dashboard')">← back</button>
+        <button class="btn btn-primary" onclick="showPage('page-step2')">next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wizard Step 2: Channels -->
+  <div class="page" id="page-step2">
+    <div class="wizard">
+      <div class="progress-steps">
+        <div class="progress-step done"></div>
+        <div class="progress-step active"></div>
+        <div class="progress-step"></div>
+        <div class="progress-step"></div>
+      </div>
+      
+      <div class="wizard-header">
+        <h2>where should they live? 📱</h2>
+        <p>pick your chat apps</p>
+      </div>
+      
+      <div class="form-section">
+        <div class="channel-grid">
+          <div class="channel-option selected" onclick="toggleChannel(this)">
+            <div class="icon">✈️</div>
+            <div class="info">
+              <div class="name">Telegram</div>
+              <div class="status">most popular</div>
+            </div>
+            <div class="check">✓</div>
+          </div>
+          <div class="channel-option" onclick="toggleChannel(this)">
+            <div class="icon">💬</div>
+            <div class="info">
+              <div class="name">WhatsApp</div>
+              <div class="status">scan qr to connect</div>
+            </div>
+            <div class="check">✓</div>
+          </div>
+          <div class="channel-option" onclick="toggleChannel(this)">
+            <div class="icon">🎮</div>
+            <div class="info">
+              <div class="name">Discord</div>
+              <div class="status">add to server</div>
+            </div>
+            <div class="check">✓</div>
+          </div>
+          <div class="channel-option" onclick="toggleChannel(this)">
+            <div class="icon">🌐</div>
+            <div class="info">
+              <div class="name">Web Chat</div>
+              <div class="status">embed anywhere</div>
+            </div>
+            <div class="check">✓</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-section">
+        <div class="form-section-title">how should they address you?</div>
+        <div class="form-group">
+          <input type="text" id="user-name" placeholder="your name or nickname" value="">
+        </div>
+      </div>
+      
+      <div class="wizard-nav">
+        <button class="btn btn-secondary" onclick="showPage('page-step1')">← back</button>
+        <button class="btn btn-primary" onclick="showPage('page-step3')">next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wizard Step 3: Skills & Mission -->
+  <div class="page" id="page-step3">
+    <div class="wizard">
+      <div class="progress-steps">
+        <div class="progress-step done"></div>
+        <div class="progress-step done"></div>
+        <div class="progress-step active"></div>
+        <div class="progress-step"></div>
+      </div>
+      
+      <div class="wizard-header">
+        <h2>what can they do? ⚡</h2>
+        <p>pick superpowers</p>
+      </div>
+      
+      <div class="form-section">
+        <div class="form-section-title">skills</div>
+        <div class="skill-grid">
+          <div class="skill-chip selected" onclick="toggleSkill(this)"><span class="emoji">🌤️</span> weather</div>
+          <div class="skill-chip selected" onclick="toggleSkill(this)"><span class="emoji">🔍</span> search</div>
+          <div class="skill-chip selected" onclick="toggleSkill(this)"><span class="emoji">📅</span> calendar</div>
+          <div class="skill-chip" onclick="toggleSkill(this)"><span class="emoji">📧</span> email</div>
+          <div class="skill-chip" onclick="toggleSkill(this)"><span class="emoji">🐙</span> github</div>
+          <div class="skill-chip" onclick="toggleSkill(this)"><span class="emoji">🎵</span> spotify</div>
+          <div class="skill-chip" onclick="toggleSkill(this)"><span class="emoji">💡</span> smart home</div>
+          <div class="skill-chip" onclick="toggleSkill(this)"><span class="emoji">📸</span> camera</div>
+          <div class="skill-chip" onclick="toggleSkill(this)"><span class="emoji">✈️</span> travel</div>
+          <div class="skill-chip" onclick="toggleSkill(this)"><span class="emoji">🛒</span> shopping</div>
+        </div>
+      </div>
+      
+      <div class="form-section">
+        <div class="form-section-title">their mission in life</div>
+        <div class="form-group">
+          <textarea id="bot-mission" placeholder="describe what you want your bot to help you with...&#10;&#10;e.g. 'help me stay organized, remind me of important stuff, and make me laugh when i'm stressed'"></textarea>
+          <div class="char-count"><span id="mission-count">0</span>/500</div>
+        </div>
+      </div>
+      
+      <div class="wizard-nav">
+        <button class="btn btn-secondary" onclick="showPage('page-step2')">← back</button>
+        <button class="btn btn-primary" onclick="showPage('page-step4')">next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wizard Step 4: Review -->
+  <div class="page" id="page-step4">
+    <div class="wizard">
+      <div class="progress-steps">
+        <div class="progress-step done"></div>
+        <div class="progress-step done"></div>
+        <div class="progress-step done"></div>
+        <div class="progress-step active"></div>
+      </div>
+      
+      <div class="wizard-header">
+        <h2>ready to spawn? 🚀</h2>
+        <p>review and launch</p>
+      </div>
+      
+      <div class="form-section">
+        <div class="bot-card-header">
+          <div class="bot-card-avatar" id="review-avatar">🦞</div>
+          <div class="bot-card-info">
+            <h3 id="review-name">your bot</h3>
+            <p id="review-personality">friendly • telegram</p>
+          </div>
+        </div>
+        <div style="background:var(--bg);padding:12px;border-radius:10px;font-size:13px;color:var(--text-dim);">
+          <strong style="color:var(--text);">Mission:</strong><br>
+          <span id="review-mission">Help you stay organized and productive</span>
+        </div>
+      </div>
+      
+      <div class="form-section">
+        <div class="form-section-title">skills enabled</div>
+        <div class="skill-grid" id="review-skills">
+          <div class="skill-chip selected"><span class="emoji">🌤️</span> weather</div>
+          <div class="skill-chip selected"><span class="emoji">🔍</span> search</div>
+          <div class="skill-chip selected"><span class="emoji">📅</span> calendar</div>
+        </div>
+      </div>
+      
+      <div class="wizard-nav">
+        <button class="btn btn-secondary" onclick="showPage('page-step3')">← back</button>
+        <button class="btn btn-primary btn-large" onclick="deploy()">✨ spawn bot</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deploying -->
+  <div class="page" id="page-deploying">
+    <div class="deploying">
+      <div class="deploying-emoji">🦞</div>
+      <h2>spawning your bot...</h2>
+      <p>this takes about 30 seconds</p>
+      <div class="progress-bar">
+        <div class="progress-fill" id="deploy-progress"></div>
+      </div>
+      <div class="deploy-status" id="deploy-status">initializing...</div>
+    </div>
+  </div>
+
+  <!-- Success -->
+  <div class="page" id="page-success">
+    <div class="success">
+      <div class="success-emoji">🎉</div>
+      <h2>they're alive!</h2>
+      <p>your bot is ready to chat</p>
+      
+      <div class="bot-card">
+        <div class="bot-card-header">
+          <div class="bot-card-avatar" id="success-avatar">🦞</div>
+          <div class="bot-card-info">
+            <h3 id="success-name">clawdy</h3>
+            <p>online • telegram</p>
+          </div>
+        </div>
+        <div class="bot-card-links">
+          <a href="#" class="bot-link">✈️ open telegram</a>
+          <a href="#" class="bot-link">⚙️ settings</a>
+        </div>
+      </div>
+      
+      <button class="btn btn-primary btn-large" onclick="window.open('https://t.me/clawdybot')">
+        💬 start chatting
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let currentPage = 'page-landing';
+    
+    function showPage(id) {
+      document.getElementById(currentPage).classList.remove('active');
+      document.getElementById(id).classList.add('active');
+      currentPage = id;
+      updateHeader();
+      
+      // Update review page
+      if (id === 'page-step4') updateReview();
+    }
+    
+    function updateHeader() {
+      const actions = document.getElementById('header-actions');
+      if (currentPage === 'page-landing') {
+        actions.innerHTML = '<button class="btn btn-primary" onclick="login()">get started</button>';
+      } else {
+        actions.innerHTML = `
+          <button class="btn btn-ghost">help</button>
+          <div style="width:36px;height:36px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;cursor:pointer;">M</div>
+        `;
+      }
+    }
+    
+    function login() {
+      showPage('page-dashboard');
+    }
+    
+    function startWizard() {
+      showPage('page-step1');
+    }
+    
+    function selectPersonality(el) {
+      document.querySelectorAll('.personality-option').forEach(p => p.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+    
+    function toggleChannel(el) {
+      el.classList.toggle('selected');
+    }
+    
+    function toggleSkill(el) {
+      el.classList.toggle('selected');
+    }
+    
+    function generateAvatar() {
+      const emojis = ['🦞', '🤖', '🐙', '🦊', '🐼', '🦄', '🐲', '🎃', '👾', '🛸'];
+      const random = emojis[Math.floor(Math.random() * emojis.length)];
+      document.getElementById('bot-emoji').value = random;
+      document.getElementById('avatar-preview').textContent = random;
+    }
+    
+    // Update emoji preview
+    document.getElementById('bot-emoji')?.addEventListener('input', function() {
+      document.getElementById('avatar-preview').textContent = this.value || '🦞';
+    });
+    
+    // Mission character count
+    document.getElementById('bot-mission')?.addEventListener('input', function() {
+      document.getElementById('mission-count').textContent = this.value.length;
+    });
+    
+    function updateReview() {
+      const name = document.getElementById('bot-name').value || 'your bot';
+      const emoji = document.getElementById('bot-emoji').value || '🦞';
+      const mission = document.getElementById('bot-mission').value || 'Help you stay organized and productive';
+      
+      document.getElementById('review-avatar').textContent = emoji;
+      document.getElementById('review-name').textContent = name;
+      document.getElementById('review-mission').textContent = mission;
+    }
+    
+    function deploy() {
+      showPage('page-deploying');
+      
+      const progress = document.getElementById('deploy-progress');
+      const status = document.getElementById('deploy-status');
+      
+      const steps = [
+        { pct: 20, msg: 'creating your bot...' },
+        { pct: 40, msg: 'configuring channels...' },
+        { pct: 60, msg: 'loading skills...' },
+        { pct: 80, msg: 'connecting to telegram...' },
+        { pct: 100, msg: 'almost there...' },
+      ];
+      
+      let i = 0;
+      const interval = setInterval(() => {
+        if (i < steps.length) {
+          progress.style.width = steps[i].pct + '%';
+          status.textContent = steps[i].msg;
+          i++;
+        } else {
+          clearInterval(interval);
+          setTimeout(() => {
+            const name = document.getElementById('bot-name').value || 'clawdy';
+            const emoji = document.getElementById('bot-emoji').value || '🦞';
+            document.getElementById('success-name').textContent = name;
+            document.getElementById('success-avatar').textContent = emoji;
+            showPage('page-success');
+          }, 500);
+        }
+      }, 600);
+    }
+    
+    // Init
+    updateHeader();
+  </script>
+</body>
+</html>
