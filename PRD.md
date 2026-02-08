@@ -431,6 +431,16 @@ Inspired by nosoul.space / Moltbook aesthetic:
 - [ ] Nuke button (with multi-step auth)
 - [ ] Bot age default (born 2000+)
 
+**To Explore (v0.3+):**
+- [ ] Telegram Group Voice Chat integration (PyTgCalls)
+  - Bot joins group voice chat, speaks/listens in real-time
+  - Free, bot-legal alternative to phone calls
+  - Library: `pytgcalls/pytgcalls` (Python, 389⭐)
+  - Limitation: Group-only, not 1:1 direct calls
+  - Could work well for "office hours" or "call-in" use cases
+- [ ] Voice message transcription + response (async voice)
+- [ ] WebRTC browser calls (no phone number needed)
+
 ---
 
 ## 10. Success metrics

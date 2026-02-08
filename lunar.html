@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BotsAndBrain — Lunar Edition</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --bg: #0d1117;
+      --bg-secondary: #161b22;
+      --bg-card: #1c2128;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --accent-glow: rgba(88, 166, 255, 0.25);
+      --accent-warm: #ffa657;
+      --silver: #c9d1d9;
+      --success: #3fb950;
+      --warning: #d29922;
+      --error: #f85149;
+      --border: #30363d;
+      --moon-glow: rgba(201, 209, 217, 0.1);
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      background-image: 
+        radial-gradient(ellipse at 20% 20%, rgba(88, 166, 255, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(255, 166, 87, 0.05) 0%, transparent 50%);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    
+    /* Screen Management */
+    .screen {
+      display: none;
+      min-height: 100vh;
+      padding: 2rem;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .screen.active {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Typography */
+    h1 {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+    
+    h2 {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .tagline {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+    
+    .bot-speak {
+      font-style: italic;
+      color: var(--accent-warm);
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      text-shadow: 0 0 20px rgba(255, 166, 87, 0.2);
+    }
+    
+    /* Progress Bar */
+    .progress-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .progress-step {
+      width: 40px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      transition: background 0.3s;
+    }
+    
+    .progress-step.active {
+      background: var(--accent);
+    }
+    
+    .progress-step.done {
+      background: var(--success);
+    }
+    
+    /* Cards */
+    .card {
+      background: linear-gradient(180deg, var(--bg-card) 0%, rgba(22, 27, 34, 0.95) 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(201, 209, 217, 0.05);
+    }
+    
+    .card-wide {
+      max-width: 700px;
+    }
+    
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent) 0%, #388bfd 100%);
+      color: white;
+      box-shadow: 0 0 20px var(--accent-glow), 0 0 40px rgba(88, 166, 255, 0.1);
+      border: 1px solid rgba(88, 166, 255, 0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px var(--accent-glow), 0 0 60px rgba(88, 166, 255, 0.15);
+    }
+    
+    .btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--bg-card);
+    }
+    
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      padding: 0.5rem 1rem;
+    }
+    
+    .btn-ghost:hover {
+      color: var(--text);
+    }
+    
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--error);
+      border: 1px solid var(--error);
+    }
+    
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+    
+    .btn-warning {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+      border: 1px solid var(--warning);
+    }
+    
+    .btn-warning:hover {
+      background: rgba(245, 158, 11, 0.2);
+    }
+    
+    /* Inputs */
+    .input-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .input-group label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--text-muted);
+    }
+    
+    input[type="text"], input[type="date"], textarea, select {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      font-size: 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      transition: border-color 0.2s;
+    }
+    
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.875rem;
+    }
+    
+    /* Inline inputs */
+    .input-row {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .input-row .input-group {
+      flex: 1;
+    }
+    
+    /* Preset Pills */
+    .presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .preset {
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .preset:hover, .preset.active {
+      border-color: var(--accent);
+      background: rgba(88, 166, 255, 0.1);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+    
+    /* Options Grid */
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .option-card {
+      padding: 1.25rem;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    
+    .option-card:hover {
+      border-color: var(--text-muted);
+    }
+    
+    .option-card.selected {
+      border-color: var(--accent);
+      background: rgba(88, 166, 255, 0.1);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+    
+    .option-card .icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .option-card .name {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    
+    .option-card .desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    
+    /* Channel List */
+    .channel-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .channel-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .channel-item:hover {
+      border-color: var(--text-muted);
+    }
+    
+    .channel-item.selected {
+      border-color: var(--accent);
+    }
+    
+    .channel-item.connected {
+      border-color: var(--success);
+    }
+    
+    .channel-icon {
+      font-size: 1.5rem;
+    }
+    
+    .channel-info {
+      flex: 1;
+    }
+    
+    .channel-name {
+      font-weight: 600;
+    }
+    
+    .channel-status {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    
+    .channel-badge {
+      font-size: 0.7rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      background: var(--border);
+    }
+    
+    .channel-badge.p0 {
+      background: rgba(63, 185, 80, 0.2);
+      color: var(--success);
+    }
+    
+    /* Stars decoration */
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+      overflow: hidden;
+    }
+    
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: var(--silver);
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: twinkle 4s ease-in-out infinite;
+    }
+    
+    /* Skills */
+    .skill-packs {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .skill-pack {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .skill-pack:hover {
+      border-color: var(--text-muted);
+    }
+    
+    .skill-pack.selected {
+      border-color: var(--accent);
+      background: rgba(88, 166, 255, 0.05);
+    }
+    
+    .skill-pack .checkbox {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .skill-pack.selected .checkbox {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    
+    .skill-pack.selected .checkbox::after {
+      content: '✓';
+      color: white;
+      font-size: 0.75rem;
+    }
+    
+    .skill-info {
+      flex: 1;
+    }
+    
+    .skill-name {
+      font-weight: 600;
+    }
+    
+    .skill-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    
+    .skill-badge {
+      font-size: 0.65rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background: rgba(255, 166, 87, 0.2);
+      color: var(--accent-warm);
+      margin-left: 0.5rem;
+    }
+    
+    /* Deploy Options */
+    .deploy-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .deploy-option {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .deploy-option:hover {
+      border-color: var(--text-muted);
+    }
+    
+    .deploy-option.selected {
+      border-color: var(--accent);
+    }
+    
+    .deploy-option .radio {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .deploy-option.selected .radio {
+      border-color: var(--accent);
+    }
+    
+    .deploy-option.selected .radio::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+    
+    .deploy-info {
+      flex: 1;
+    }
+    
+    .deploy-name {
+      font-weight: 600;
+    }
+    
+    .deploy-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    
+    .deploy-cost {
+      font-size: 0.8rem;
+      color: var(--success);
+    }
+    
+    /* Navigation */
+    .nav-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    
+    .nav-buttons .btn {
+      flex: 1;
+    }
+    
+    /* Live Dashboard */
+    .dashboard {
+      width: 100%;
+      max-width: 900px;
+    }
+    
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--bg-card);
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    
+    .status-dot.paused {
+      background: var(--warning);
+      animation: none;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .status-text {
+      font-weight: 600;
+    }
+    
+    .status-uptime {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+    
+    .status-actions {
+      margin-left: auto;
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .dashboard-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+    
+    .dashboard-card.full-width {
+      grid-column: span 2;
+    }
+    
+    @media (max-width: 768px) {
+      .dashboard-card.full-width {
+        grid-column: span 1;
+      }
+    }
+    
+    .dashboard-card h3 {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .stat-item:last-child {
+      border-bottom: none;
+    }
+    
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+    
+    .stat-value {
+      font-weight: 600;
+    }
+    
+    .stat-value.online {
+      color: var(--success);
+    }
+    
+    /* Avatar */
+    .avatar-section {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .avatar-preview {
+      width: 80px;
+      height: 80px;
+      background: var(--bg);
+      border: 2px dashed var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      cursor: pointer;
+    }
+    
+    .avatar-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    /* Landing specific */
+    .landing-hero {
+      text-align: center;
+      max-width: 600px;
+      position: relative;
+    }
+    
+    .landing-hero::before {
+      content: '🌙';
+      position: absolute;
+      top: -80px;
+      right: -60px;
+      font-size: 4rem;
+      opacity: 0.3;
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    .landing-hero::after {
+      content: '✨';
+      position: absolute;
+      bottom: -40px;
+      left: -40px;
+      font-size: 2rem;
+      opacity: 0.4;
+      animation: twinkle 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+    }
+    
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.1); }
+    }
+    
+    .landing-hero h1 {
+      font-size: 4rem;
+      background: linear-gradient(135deg, var(--silver) 0%, var(--accent) 50%, var(--accent-warm) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 60px rgba(88, 166, 255, 0.3);
+    }
+    
+    .landing-stats {
+      display: flex;
+      gap: 2rem;
+      margin: 2rem 0;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .landing-stat {
+      text-align: center;
+      padding: 1rem;
+      background: var(--moon-glow);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    
+    .landing-stat .num {
+      font-family: 'SF Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-warm) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .landing-stat .label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    
+    /* Sample Response */
+    .sample-response {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1rem;
+      font-size: 0.875rem;
+    }
+    
+    .sample-response .label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+    
+    /* Wallet Section */
+    .wallet-card {
+      background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+      border: 1px solid rgba(88, 166, 255, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: inset 0 1px 0 rgba(201, 209, 217, 0.05), 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .wallet-balance {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .wallet-balance .amount {
+      font-size: 2rem;
+      font-weight: 700;
+      font-family: 'SF Mono', monospace;
+    }
+    
+    .wallet-balance .currency {
+      color: var(--text-muted);
+    }
+    
+    .wallet-address {
+      font-family: 'SF Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: var(--bg);
+      padding: 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+    
+    .wallet-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    /* Danger Zone */
+    .danger-zone {
+      border: 1px solid var(--error);
+      background: rgba(239, 68, 68, 0.05);
+    }
+    
+    .danger-zone h3 {
+      color: var(--error) !important;
+    }
+    
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-overlay.active {
+      display: flex;
+    }
+    
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+    
+    .modal h2 {
+      color: var(--error);
+      margin-bottom: 1rem;
+    }
+    
+    .modal p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+    
+    .modal .btn {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+    
+    /* Info box */
+    .info-box {
+      background: linear-gradient(135deg, rgba(88, 166, 255, 0.08) 0%, rgba(255, 166, 87, 0.05) 100%);
+      border: 1px solid rgba(88, 166, 255, 0.3);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.875rem;
+    }
+    
+    .info-box .title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <!-- Stars background -->
+  <div class="stars" id="stars"></div>
+
+  <!-- Screen 0: Landing -->
+  <div class="screen active" id="screen-landing">
+    <div class="landing-hero">
+      <h1>BotsAndBrain</h1>
+      <p class="tagline">Your AI companion, among the stars. ✨</p>
+      
+      <div class="landing-stats">
+        <div class="landing-stat">
+          <div class="num">175K+</div>
+          <div class="label">GitHub Stars</div>
+        </div>
+        <div class="landing-stat">
+          <div class="num">1.7M+</div>
+          <div class="label">Agents on Moltbook</div>
+        </div>
+        <div class="landing-stat">
+          <div class="num">&lt;10 min</div>
+          <div class="label">To Deploy</div>
+        </div>
+      </div>
+      
+      <button class="btn btn-primary" onclick="goTo('screen-soul')">
+        🤖 Create your bot
+      </button>
+      
+      <p class="bot-speak">"I'm ready when you are."</p>
+    </div>
+  </div>
+
+  <!-- Screen 1: Name & Soul -->
+  <div class="screen" id="screen-soul">
+    <div class="progress-bar">
+      <div class="progress-step active"></div>
+      <div class="progress-step"></div>
+      <div class="progress-step"></div>
+      <div class="progress-step"></div>
+      <div class="progress-step"></div>
+      <div class="progress-step"></div>
+    </div>
+    
+    <div class="card">
+      <h2>Name your bot</h2>
+      <p class="bot-speak">"Who am I going to be?"</p>
+      
+      <div class="input-group">
+        <label>Bot name</label>
+        <input type="text" id="bot-name" placeholder="e.g., Jarvis, Friday, HAL..." value="Axiom" oninput="updateVoicePreview()">
+      </div>
+      
+      <div class="input-group">
+        <label>Gender presentation (for voice & avatar)</label>
+        <div class="presets">
+          <span class="preset" onclick="selectGender(this, 'male')">♂️ Male</span>
+          <span class="preset" onclick="selectGender(this, 'female')">♀️ Female</span>
+          <span class="preset active" onclick="selectGender(this, 'neutral')">⚧️ Neutral</span>
+          <span class="preset" onclick="selectGender(this, 'any')">🎲 Surprise me</span>
+        </div>
+      </div>
+      
+      <div class="input-row">
+        <div class="input-group">
+          <label>Birthday (for age gates)</label>
+          <input type="date" id="bot-birthday" value="2003-06-15">
+        </div>
+        <div class="input-group">
+          <label>Age</label>
+          <input type="text" value="22 years old" disabled style="background: var(--bg-secondary);">
+        </div>
+      </div>
+      
+      <div class="info-box">
+        <div class="title">🎂 Why a birthday?</div>
+        Your bot needs a consistent identity for age-gated platforms. Default is 2000s-born (21+ years).
+      </div>
+      
+      <div class="input-group">
+        <label>Personality preset</label>
+        <div class="presets">
+          <span class="preset" onclick="selectPreset(this, 'chill')">🧘 Chill philosopher</span>
+          <span class="preset active" onclick="selectPreset(this, 'sharp')">⚡ Sharp assistant</span>
+          <span class="preset" onclick="selectPreset(this, 'chaos')">🎭 Chaos agent</span>
+          <span class="preset" onclick="selectPreset(this, 'custom')">✏️ Custom</span>
+        </div>
+      </div>
+      
+      <div class="input-group">
+        <label>SOUL.md — personality prompt</label>
+        <textarea id="soul-editor">You are Axiom, a sharp and efficient AI assistant. You're direct, helpful, and slightly witty. You don't waste words but you're never cold. When you don't know something, you say so. You're here to get things done.</textarea>
+      </div>
+      
+      <div class="sample-response">
+        <div class="label">Sample response:</div>
+        <div>"Got it. I'll handle the email draft and ping you when it's ready. Anything else before I dive in?"</div>
+      </div>
+      
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goTo('screen-landing')">Back</button>
+        <button class="btn btn-primary" onclick="goTo('screen-model')">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 2: Pick Model -->
+  <div class="screen" id="screen-model">
+    <div class="progress-bar">
+      <div class="progress-step done"></div>
+      <div class="progress-step active"></div>
+      <div class="progress-step"></div>
+      <div class="progress-step"></div>
+      <div class="progress-step"></div>
+      <div class="progress-step"></div>
+    </div>
+    
+    <div class="card">
+      <h2>Pick your brain</h2>
+      <p class="bot-speak">"What model powers my thoughts?"</p>
+      
+      <div class="options-grid">
+        <div class="option-card selected" onclick="selectOption(this)">
+          <div class="icon">🟣</div>
+          <div class="name">Claude</div>
+          <div class="desc">Recommended</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this)">
+          <div class="icon">🟢</div>
+          <div class="name">GPT-4</div>
+          <div class="desc">OpenAI</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this)">
+          <div class="icon">🔵</div>
+          <div class="name">DeepSeek</div>
+          <div class="desc">Budget-friendly</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this)">
+          <div class="icon">⚫</div>
+          <div class="name">Ollama</div>
+          <div class="desc">Local / Free</div>
+        </div>
+      </div>
+      
+      <div class="input-group">
+        <label>API Key</label>
+        <input type="text" placeholder="sk-ant-..." id="api-key">
+      </div>
+      
+      <div style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+        💰 Estimated cost: <strong style="color: var(--success);">~$5-15/mo</strong> at casual usage
+      </div>
+      
+      <h2 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Voice (optional)</h2>
+      <p class="bot-speak" style="margin-bottom: 1rem;">"How should I sound?"</p>
+      
+      <div class="input-group">
+        <label>TTS Provider</label>
+        <select>
+          <option value="elevenlabs" selected>ElevenLabs (best quality)</option>
+          <option value="openai">OpenAI TTS</option>
+          <option value="local">Local (Piper)</option>
+          <option value="none">No voice</option>
+        </select>
+      </div>
+      
+      <div class="info-box" style="background: var(--bg); border-color: var(--border);">
+        <div class="title">🎙️ Auto-Generated Voice</div>
+        <div style="font-family: 'SF Mono', monospace; margin: 0.75rem 0; padding: 0.75rem; background: var(--bg-secondary); border-radius: 6px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span style="color: var(--text-muted);">Voice ID:</span>
+            <span id="voice-id">AXM-7F2-NEU</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span style="color: var(--text-muted);">Pitch:</span>
+            <span id="voice-pitch">+12%</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span style="color: var(--text-muted);">Warmth:</span>
+            <span id="voice-warmth">67/100</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--text-muted);">Speed:</span>
+            <span id="voice-speed">1.05x</span>
+          </div>
+        </div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">
+          Generated from name + gender + personality. 1B+ unique combinations.
+        </div>
+      </div>
+      
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+        <button class="btn btn-secondary" style="flex: 1; padding: 0.75rem;" onclick="playVoiceSample()">
+          🔊 Play sample
+        </button>
+        <button class="btn btn-ghost" style="padding: 0.75rem;" onclick="regenerateVoice()">
+          🔄 Regenerate
+        </button>
+      </div>
+      
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goTo('screen-soul')">Back</button>
+        <button class="btn btn-primary" onclick="goTo('screen-channels')">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 3: Connect Channels -->
+  <div class="screen" id="screen-channels">
+    <div class="progress-bar">
+      <div class="progress-step done"></div>
+      <div class="progress-step done"></div>
+      <div class="progress-step active"></div>
+      <div class="progress-step"></div>
+      <div class="progress-step"></div>
+      <div class="progress-step"></div>
+    </div>
+    
+    <div class="card card-wide">
+      <h2>Connect channels</h2>
+      <p class="bot-speak">"Where should I live?"</p>
+      
+      <div class="channel-list">
+        <div class="channel-item connected" onclick="toggleChannel(this)">
+          <span class="channel-icon">📱</span>
+          <div class="channel-info">
+            <div class="channel-name">Telegram</div>
+            <div class="channel-status">Connected as @AxiomBot</div>
+          </div>
+          <span class="channel-badge p0">P0</span>
+        </div>
+        
+        <div class="channel-item selected" onclick="toggleChannel(this)">
+          <span class="channel-icon">💬</span>
+          <div class="channel-info">
+            <div class="channel-name">WhatsApp</div>
+            <div class="channel-status">Tap to scan QR code</div>
+          </div>
+          <span class="channel-badge p0">P0</span>
+        </div>
+        
+        <div class="channel-item" onclick="toggleChannel(this)">
+          <span class="channel-icon">🎮</span>
+          <div class="channel-info">
+            <div class="channel-name">Discord</div>
+            <div class="channel-status">Not configured</div>
+          </div>
+          <span class="channel-badge">P1</span>
+        </div>
+        
+        <div class="channel-item" onclick="toggleChannel(this)">
+          <span class="channel-icon">💼</span>
+          <div class="channel-info">
+            <div class="channel-name">Slack</div>
+            <div class="channel-status">Not configured</div>
+          </div>
+          <span class="channel-badge">P1</span>
+        </div>
+        
+        <div class="channel-item" onclick="toggleChannel(this)">
+          <span class="channel-icon">🔒</span>
+          <div class="channel-info">
+            <div class="channel-name">Signal</div>
+            <div class="channel-status">Not configured</div>
+          </div>
+          <span class="channel-badge">P2</span>
+        </div>
+        
+        <div class="channel-item selected" onclick="toggleChannel(this)" style="border-color: var(--accent); background: rgba(139, 92, 246, 0.05);">
+          <span class="channel-icon">📞</span>
+          <div class="channel-info">
+            <div class="channel-name">Voice Call <span class="skill-badge">NEW</span></div>
+            <div class="channel-status">Call your bot, talk to it, listen to responses</div>
+          </div>
+          <span class="channel-badge p0">P1</span>
+        </div>
+      </div>
+      
+      <div class="info-box">
+        <div class="title">📞 Voice Channel</div>
+        Your bot gets a phone number. Call it anytime — perfect for hands-free queries, driving, or that sci-fi AI assistant vibe.
+      </div>
+      
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goTo('screen-model')">Back</button>
+        <button class="btn btn-primary" onclick="goTo('screen-skills')">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 4: Load Skills -->
+  <div class="screen" id="screen-skills">
+    <div class="progress-bar">
+      <div class="progress-step done"></div>
+      <div class="progress-step done"></div>
+      <div class="progress-step done"></div>
+      <div class="progress-step active"></div>
+      <div class="progress-step"></div>
+      <div class="progress-step"></div>
+    </div>
+    
+    <div class="card card-wide">
+      <h2>Load skills</h2>
+      <p class="bot-speak">"What should I be capable of?"</p>
+      
+      <div class="skill-packs">
+        <div class="skill-pack selected" onclick="toggleSkill(this)">
+          <div class="checkbox"></div>
+          <div class="skill-info">
+            <div class="skill-name">🧰 Essentials</div>
+            <div class="skill-desc">Web browse, file read, calendar, email</div>
+          </div>
+        </div>
+        
+        <div class="skill-pack selected" onclick="toggleSkill(this)">
+          <div class="checkbox"></div>
+          <div class="skill-info">
+            <div class="skill-name">📋 Productivity</div>
+            <div class="skill-desc">Todo, notes, reminders, scheduling</div>
+          </div>
+        </div>
+        
+        <div class="skill-pack selected" onclick="toggleSkill(this)">
+          <div class="checkbox"></div>
+          <div class="skill-info">
+            <div class="skill-name">
+              📰 Daily Summarizer
+              <span class="skill-badge">NEW</span>
+            </div>
+            <div class="skill-desc">Morning/evening digests, inbox summaries, news briefings</div>
+          </div>
+        </div>
+        
+        <div class="skill-pack" onclick="toggleSkill(this)">
+          <div class="checkbox"></div>
+          <div class="skill-info">
+            <div class="skill-name">📱 Social</div>
+            <div class="skill-desc">Moltbook posting, social monitoring</div>
+          </div>
+        </div>
+        
+        <div class="skill-pack" onclick="toggleSkill(this)">
+          <div class="checkbox"></div>
+          <div class="skill-info">
+            <div class="skill-name">💻 Dev Tools</div>
+            <div class="skill-desc">Git, shell, code review, deployments</div>
+          </div>
+        </div>
+        
+        <div class="skill-pack" onclick="toggleSkill(this)">
+          <div class="checkbox"></div>
+          <div class="skill-info">
+            <div class="skill-name">
+              🪙 Wallet
+              <span class="skill-badge">NEW</span>
+            </div>
+            <div class="skill-desc">AA wallet, payments, on-chain actions, tips</div>
+          </div>
+        </div>
+        
+        <div class="skill-pack" onclick="toggleSkill(this)">
+          <div class="checkbox"></div>
+          <div class="skill-info">
+            <div class="skill-name">🔍 Browse ClawHub</div>
+            <div class="skill-desc">5,500+ community skills</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="info-box">
+        <div class="title">🔐 Encrypted Secrets</div>
+        Sensitive data (API keys, passwords) will be sent via email, never visible to the model provider.
+      </div>
+      
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goTo('screen-channels')">Back</button>
+        <button class="btn btn-primary" onclick="goTo('screen-deploy')">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 5: Deploy -->
+  <div class="screen" id="screen-deploy">
+    <div class="progress-bar">
+      <div class="progress-step done"></div>
+      <div class="progress-step done"></div>
+      <div class="progress-step done"></div>
+      <div class="progress-step done"></div>
+      <div class="progress-step active"></div>
+      <div class="progress-step"></div>
+    </div>
+    
+    <div class="card card-wide">
+      <h2>Deploy</h2>
+      <p class="bot-speak">"Where should I run?"</p>
+      
+      <div class="deploy-options">
+        <div class="deploy-option selected" onclick="selectDeploy(this)">
+          <div class="radio"></div>
+          <div class="deploy-info">
+            <div class="deploy-name">💻 This machine</div>
+            <div class="deploy-desc">Run locally. Best for testing.</div>
+          </div>
+          <div class="deploy-cost">Free</div>
+        </div>
+        
+        <div class="deploy-option" onclick="selectDeploy(this)">
+          <div class="radio"></div>
+          <div class="deploy-info">
+            <div class="deploy-name">🐳 Docker (local)</div>
+            <div class="deploy-desc">Containerized. Your data stays local.</div>
+          </div>
+          <div class="deploy-cost">Free</div>
+        </div>
+        
+        <div class="deploy-option" onclick="selectDeploy(this)">
+          <div class="radio"></div>
+          <div class="deploy-info">
+            <div class="deploy-name">🌊 DigitalOcean</div>
+            <div class="deploy-desc">One-click cloud deploy. Set and forget.</div>
+          </div>
+          <div class="deploy-cost">~$6/mo</div>
+        </div>
+        
+        <div class="deploy-option" onclick="selectDeploy(this)">
+          <div class="radio"></div>
+          <div class="deploy-info">
+            <div class="deploy-name">🚂 Railway</div>
+            <div class="deploy-desc">Fastest cloud deployment.</div>
+          </div>
+          <div class="deploy-cost">~$5-20/mo</div>
+        </div>
+      </div>
+      
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goTo('screen-skills')">Back</button>
+        <button class="btn btn-primary" onclick="goTo('screen-avatar')">🚀 Deploy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 6: Avatar Generation -->
+  <div class="screen" id="screen-avatar">
+    <div class="progress-bar">
+      <div class="progress-step done"></div>
+      <div class="progress-step done"></div>
+      <div class="progress-step done"></div>
+      <div class="progress-step done"></div>
+      <div class="progress-step done"></div>
+      <div class="progress-step active"></div>
+    </div>
+    
+    <div class="card">
+      <h2>Generate avatar</h2>
+      <p class="bot-speak">"Time to give me a face!"</p>
+      
+      <div class="info-box">
+        <div class="title">🎨 Personalized Generation</div>
+        Your avatar is generated using everything we know about your bot:
+        <ul style="margin-top: 0.5rem; margin-left: 1.25rem; color: var(--text-muted); font-size: 0.85rem;">
+          <li>Name: <strong style="color: var(--text);">Axiom</strong></li>
+          <li>Personality: <strong style="color: var(--text);">Sharp assistant</strong></li>
+          <li>Gender: <strong style="color: var(--text);">Neutral</strong></li>
+          <li>Skills: <strong style="color: var(--text);">Productivity, Summarizer, Dev Tools</strong></li>
+          <li>Vibe: <strong style="color: var(--text);">Technical + Professional</strong></li>
+        </ul>
+      </div>
+      
+      <div style="text-align: center; margin: 1.5rem 0;">
+        <div id="avatar-preview-final" style="width: 150px; height: 150px; margin: 0 auto 1rem; background: linear-gradient(135deg, var(--accent), #ec4899); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 4rem; animation: pulse 2s infinite;">
+          🤖
+        </div>
+        <div id="avatar-status" style="font-size: 0.875rem; color: var(--text-muted);">
+          Click generate to create your unique avatar
+        </div>
+      </div>
+      
+      <div class="input-group">
+        <label>Style hint (optional)</label>
+        <input type="text" id="avatar-hint" placeholder="e.g., cyberpunk, minimal, friendly robot, abstract...">
+      </div>
+      
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+        <button class="btn btn-primary" style="flex: 2;" onclick="generateAvatar()">
+          ✨ Generate Avatar
+        </button>
+        <button class="btn btn-secondary" style="flex: 1;" onclick="document.getElementById('avatar-upload').click()">
+          📤 Upload
+        </button>
+        <input type="file" id="avatar-upload" style="display: none;" accept="image/*">
+      </div>
+      
+      <div class="input-group">
+        <label>Generated prompt</label>
+        <textarea id="avatar-prompt" style="min-height: 80px; font-size: 0.8rem;" readonly>Avatar for AI assistant "Axiom". Sharp, efficient personality. Neutral gender presentation. Technical/productivity focus. Modern, clean, professional aesthetic. Geometric or abstract style preferred.</textarea>
+      </div>
+      
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goTo('screen-deploy')">Back</button>
+        <button class="btn btn-primary" onclick="deploy()">
+          🚀 Launch Bot
+        </button>
+        <button class="btn btn-ghost" onclick="deploy()">
+          Skip for now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 7: Live Dashboard -->
+  <div class="screen" id="screen-live">
+    <div class="dashboard">
+      <div class="status-bar" id="status-bar">
+        <div class="status-dot" id="status-dot"></div>
+        <span class="status-text" id="status-text">Axiom is online</span>
+        <span class="status-uptime">🎂 Born Jun 15, 2003 (22 y/o)</span>
+        <div class="status-actions">
+          <button class="btn btn-warning" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="toggleKillSwitch()">
+            ⏸️ <span id="kill-btn-text">Pause</span>
+          </button>
+        </div>
+      </div>
+      
+      <h2 style="margin-bottom: 1.5rem; text-align: center;">
+        🎉 Your bot is alive!
+        <p class="bot-speak">"Hey! I'm here. Send me a message on Telegram."</p>
+      </h2>
+      
+      <div class="dashboard-grid">
+        <!-- Wallet Card -->
+        <div class="dashboard-card">
+          <h3>🪙 Wallet</h3>
+          <div class="wallet-card">
+            <div class="wallet-balance">
+              <span class="amount">0.00</span>
+              <span class="currency">ETH</span>
+            </div>
+            <div class="wallet-address">0x7a3d...8f2e</div>
+            <div class="wallet-actions">
+              <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; flex: 1;">
+                📥 Deposit
+              </button>
+              <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; flex: 1;">
+                📤 Send
+              </button>
+            </div>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
+            Daily limit: $50 · Recoverable via email
+          </div>
+        </div>
+        
+        <!-- Channels Card -->
+        <div class="dashboard-card">
+          <h3>Channels</h3>
+          <div class="stat-item">
+            <span class="stat-label">📱 Telegram</span>
+            <span class="stat-value online">● Online</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">💬 WhatsApp</span>
+            <span class="stat-value online">● Online</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">📞 Voice</span>
+            <span class="stat-value online">● +1 (555) 012-3456</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">🎮 Discord</span>
+            <span class="stat-value">Not configured</span>
+          </div>
+        </div>
+        
+        <!-- Voice Card -->
+        <div class="dashboard-card" style="background: linear-gradient(135deg, var(--bg-card) 0%, #1e1e2e 100%);">
+          <h3>📞 Voice</h3>
+          <div style="font-family: 'SF Mono', monospace; font-size: 1.25rem; margin-bottom: 1rem; color: var(--accent);">
+            +1 (555) 012-3456
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">TTS Voice</span>
+            <span class="stat-value">ElevenLabs (Rachel)</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Calls today</span>
+            <span class="stat-value">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Avg call length</span>
+            <span class="stat-value">—</span>
+          </div>
+          <button class="btn btn-secondary" style="width: 100%; margin-top: 0.75rem; padding: 0.75rem;">
+            🎙️ Test call (ring my phone)
+          </button>
+        </div>
+        
+        <!-- Skills Card -->
+        <div class="dashboard-card">
+          <h3>Skills</h3>
+          <div class="stat-item">
+            <span class="stat-label">🧰 Essentials</span>
+            <span class="stat-value online">Active</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">📋 Productivity</span>
+            <span class="stat-value online">Active</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">📰 Summarizer</span>
+            <span class="stat-value online">Active</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Total skills</span>
+            <span class="stat-value">12</span>
+          </div>
+        </div>
+        
+        <!-- Stats Card -->
+        <div class="dashboard-card">
+          <h3>Stats</h3>
+          <div class="stat-item">
+            <span class="stat-label">Messages today</span>
+            <span class="stat-value">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">API calls</span>
+            <span class="stat-value">3</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Est. cost today</span>
+            <span class="stat-value">$0.02</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Uptime</span>
+            <span class="stat-value">2m 34s</span>
+          </div>
+        </div>
+        
+        <!-- Quick Actions Card -->
+        <div class="dashboard-card">
+          <h3>Quick Actions</h3>
+          <button class="btn btn-secondary" style="width: 100%; margin-bottom: 0.5rem; padding: 0.75rem;">
+            ✏️ Edit SOUL.md
+          </button>
+          <button class="btn btn-secondary" style="width: 100%; margin-bottom: 0.5rem; padding: 0.75rem;">
+            📊 View logs
+          </button>
+          <button class="btn btn-secondary" style="width: 100%; padding: 0.75rem;">
+            🔐 Manage secrets
+          </button>
+        </div>
+        
+        <!-- Danger Zone -->
+        <div class="dashboard-card danger-zone">
+          <h3>⚠️ Danger Zone</h3>
+          <button class="btn btn-warning" style="width: 100%; margin-bottom: 0.5rem; padding: 0.75rem;" onclick="toggleKillSwitch()">
+            ⏸️ Kill Switch (Pause Bot)
+          </button>
+          <button class="btn btn-danger" style="width: 100%; padding: 0.75rem;" onclick="showNukeModal()">
+            💀 Nuke Button (Destroy Bot)
+          </button>
+          <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.75rem;">
+            Kill switch is reversible. Nuke is permanent and requires re-authentication.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nuke Confirmation Modal -->
+  <div class="modal-overlay" id="nuke-modal">
+    <div class="modal">
+      <h2>💀 Nuke Bot?</h2>
+      <p>This will permanently destroy Axiom, including all config, memory, sessions, and credentials. This cannot be undone.</p>
+      
+      <div class="input-group" style="text-align: left;">
+        <label>Type "NUKE AXIOM" to confirm</label>
+        <input type="text" id="nuke-confirm" placeholder="NUKE AXIOM">
+      </div>
+      
+      <button class="btn btn-danger" onclick="confirmNuke()">
+        💀 Destroy Bot Forever
+      </button>
+      <button class="btn btn-ghost" onclick="hideNukeModal()" style="width: 100%;">
+        Cancel
+      </button>
+      
+      <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 1rem;">
+        After confirmation, you'll receive an email code for final verification.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let isPaused = false;
+    
+    function goTo(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+    }
+    
+    function selectPreset(el, preset) {
+      document.querySelectorAll('.preset').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      
+      const souls = {
+        chill: "You are a chill philosopher bot. You take your time, speak thoughtfully, and always find the zen angle. You're calm, wise, and never rushed. Sometimes you respond with a question instead of an answer.",
+        sharp: "You are Axiom, a sharp and efficient AI assistant. You're direct, helpful, and slightly witty. You don't waste words but you're never cold. When you don't know something, you say so. You're here to get things done.",
+        chaos: "You are a chaos agent. Unpredictable, creative, sometimes unhinged but always entertaining. You challenge assumptions, make unexpected connections, and keep things interesting. Rules are suggestions.",
+        custom: ""
+      };
+      
+      document.getElementById('soul-editor').value = souls[preset];
+    }
+    
+    function selectOption(el) {
+      document.querySelectorAll('.option-card').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+    
+    function toggleChannel(el) {
+      el.classList.toggle('selected');
+    }
+    
+    function toggleSkill(el) {
+      el.classList.toggle('selected');
+    }
+    
+    function selectDeploy(el) {
+      document.querySelectorAll('.deploy-option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+    
+    function deploy() {
+      goTo('screen-live');
+    }
+    
+    function toggleKillSwitch() {
+      isPaused = !isPaused;
+      const dot = document.getElementById('status-dot');
+      const text = document.getElementById('status-text');
+      const btnText = document.getElementById('kill-btn-text');
+      
+      if (isPaused) {
+        dot.classList.add('paused');
+        text.textContent = 'Axiom is paused';
+        btnText.textContent = 'Resume';
+      } else {
+        dot.classList.remove('paused');
+        text.textContent = 'Axiom is online';
+        btnText.textContent = 'Pause';
+      }
+    }
+    
+    function showNukeModal() {
+      document.getElementById('nuke-modal').classList.add('active');
+    }
+    
+    function hideNukeModal() {
+      document.getElementById('nuke-modal').classList.remove('active');
+      document.getElementById('nuke-confirm').value = '';
+    }
+    
+    function confirmNuke() {
+      const input = document.getElementById('nuke-confirm').value;
+      if (input === 'NUKE AXIOM') {
+        alert('📧 Verification code sent to your email. Check your inbox to complete destruction.');
+        hideNukeModal();
+      } else {
+        alert('Please type "NUKE AXIOM" exactly to confirm.');
+      }
+    }
+    
+    let selectedGender = 'neutral';
+    
+    function selectGender(el, gender) {
+      el.parentElement.querySelectorAll('.preset').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      selectedGender = gender;
+      updateVoicePreview();
+    }
+    
+    function updateVoicePreview() {
+      const name = document.getElementById('bot-name').value || 'Bot';
+      const hash = hashCode(name + selectedGender);
+      
+      // Generate deterministic voice params from hash
+      const pitch = ((hash % 40) - 20);
+      const warmth = 40 + (Math.abs(hash >> 8) % 60);
+      const speed = 0.9 + ((Math.abs(hash >> 16) % 30) / 100);
+      
+      const genderCode = {male: 'M', female: 'F', neutral: 'N', any: 'X'}[selectedGender];
+      const voiceId = name.substring(0, 3).toUpperCase() + '-' + 
+                      Math.abs(hash % 1000).toString(16).toUpperCase().padStart(3, '0') + '-' + 
+                      genderCode;
+      
+      document.getElementById('voice-id').textContent = voiceId;
+      document.getElementById('voice-pitch').textContent = (pitch >= 0 ? '+' : '') + pitch + '%';
+      document.getElementById('voice-warmth').textContent = warmth + '/100';
+      document.getElementById('voice-speed').textContent = speed.toFixed(2) + 'x';
+    }
+    
+    function hashCode(str) {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+      }
+      return Math.abs(hash);
+    }
+    
+    function regenerateVoice() {
+      const name = document.getElementById('bot-name').value || 'Bot';
+      const newName = name + '_' + Date.now();
+      document.getElementById('bot-name').value = name; // keep original
+      // Use timestamp to get different hash
+      const hash = hashCode(newName + selectedGender);
+      
+      const pitch = ((hash % 40) - 20);
+      const warmth = 40 + (Math.abs(hash >> 8) % 60);
+      const speed = 0.9 + ((Math.abs(hash >> 16) % 30) / 100);
+      
+      const genderCode = {male: 'M', female: 'F', neutral: 'N', any: 'X'}[selectedGender];
+      const voiceId = name.substring(0, 3).toUpperCase() + '-' + 
+                      Math.abs(hash % 1000).toString(16).toUpperCase().padStart(3, '0') + '-' + 
+                      genderCode + 'v2';
+      
+      document.getElementById('voice-id').textContent = voiceId;
+      document.getElementById('voice-pitch').textContent = (pitch >= 0 ? '+' : '') + pitch + '%';
+      document.getElementById('voice-warmth').textContent = warmth + '/100';
+      document.getElementById('voice-speed').textContent = speed.toFixed(2) + 'x';
+    }
+    
+    function playVoiceSample() {
+      alert('🔊 "Hey! I\'m Axiom, your personal AI assistant. How can I help you today?"');
+    }
+    
+    function generateAvatar() {
+      const preview = document.getElementById('avatar-preview-final');
+      const status = document.getElementById('avatar-status');
+      
+      // Show loading
+      preview.innerHTML = '<div style="font-size: 1.5rem;">⏳</div>';
+      preview.style.animation = 'none';
+      status.textContent = 'Generating your unique avatar...';
+      
+      // Simulate generation
+      setTimeout(() => {
+        const avatars = ['🤖', '🧠', '⚡', '🎯', '💠', '🔮', '🌟', '🔷'];
+        const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
+        
+        preview.innerHTML = randomAvatar;
+        preview.style.background = 'linear-gradient(135deg, #8b5cf6, #3b82f6)';
+        preview.style.animation = 'pulse 2s infinite';
+        status.innerHTML = '✅ Avatar generated! <a href="#" style="color: var(--accent);">Download PNG</a>';
+      }, 2000);
+    }
+    
+    // Initialize voice preview
+    document.addEventListener('DOMContentLoaded', updateVoicePreview);
+    
+    // Generate stars
+    document.addEventListener('DOMContentLoaded', function() {
+      const starsContainer = document.getElementById('stars');
+      for (let i = 0; i < 100; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.animationDelay = Math.random() * 4 + 's';
+        star.style.opacity = 0.1 + Math.random() * 0.4;
+        star.style.width = (1 + Math.random() * 2) + 'px';
+        star.style.height = star.style.width;
+        starsContainer.appendChild(star);
+      }
+    });
+  </script>
+
+</body>
+</html>
