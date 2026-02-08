@@ -628,6 +628,12 @@
       </button>
       
       <p class="bot-speak">"I'm ready when you are."</p>
+      
+      <div style="margin-top: 3rem; display: flex; gap: 2rem;">
+        <a href="#" onclick="goTo('screen-docs'); return false;" style="color: var(--text-muted); text-decoration: none;">📚 Docs</a>
+        <a href="https://github.com/mcclowin/openclaw-deploy" target="_blank" style="color: var(--text-muted); text-decoration: none;">🐙 GitHub</a>
+        <a href="https://app.radicle.xyz/nodes/z6Mkw8uioyonaq6HzdqgwZHUZHx5F6KxEMoQTEPjEYdL3aWr/rad:z25qHUCE4BzYCRNMCbRq6cku1uhcv" target="_blank" style="color: var(--text-muted); text-decoration: none;">🌐 Radicle</a>
+      </div>
     </div>
   </div>
 
@@ -658,32 +664,20 @@ Example: Help me manage my schedule, remind me of important tasks, and summarize
         <p class="hint">💡 I'll stay focused on this. No tangents.</p>
       </div>
       
-      <div class="input-group">
-        <label>My personality (optional)</label>
-        <div class="flavor-chips">
-          <span class="flavor-chip" onclick="toggleFlavor(this)">🎭 Witty</span>
-          <span class="flavor-chip" onclick="toggleFlavor(this)">🧘 Calm</span>
-          <span class="flavor-chip" onclick="toggleFlavor(this)">⚡ Direct</span>
-          <span class="flavor-chip" onclick="toggleFlavor(this)">🤗 Warm</span>
-          <span class="flavor-chip" onclick="toggleFlavor(this)">🎩 Formal</span>
-          <span class="flavor-chip" onclick="toggleFlavor(this)">😊 Emoji lover</span>
-        </div>
-      </div>
-      
       <div class="nav-buttons">
         <button class="btn btn-secondary" onclick="goTo('screen-landing')">Back</button>
-        <button class="btn btn-primary" onclick="goTo('screen-brain')">Next →</button>
+        <button class="btn btn-primary" onclick="goTo('screen-channels')">Next →</button>
       </div>
     </div>
   </div>
 
-  <!-- Screen 2: Pick Brain -->
+  <!-- Screen 4: Brain (Payment) -->
   <div class="screen" id="screen-brain">
     <div class="progress-bar">
       <div class="progress-step done"></div>
+      <div class="progress-step done"></div>
+      <div class="progress-step done"></div>
       <div class="progress-step active"></div>
-      <div class="progress-step"></div>
-      <div class="progress-step"></div>
       <div class="progress-step"></div>
     </div>
     
@@ -742,18 +736,18 @@ Example: Help me manage my schedule, remind me of important tasks, and summarize
       </div>
       
       <div class="nav-buttons">
-        <button class="btn btn-secondary" onclick="goTo('screen-mission')">Back</button>
-        <button class="btn btn-primary" onclick="goTo('screen-channels')">Next →</button>
+        <button class="btn btn-secondary" onclick="goTo('screen-skills')">Back</button>
+        <button class="btn btn-primary" onclick="goTo('screen-birth')">Next →</button>
       </div>
     </div>
   </div>
 
-  <!-- Screen 3: Connect Channels -->
+  <!-- Screen 2: Connect Channels -->
   <div class="screen" id="screen-channels">
     <div class="progress-bar">
       <div class="progress-step done"></div>
-      <div class="progress-step done"></div>
       <div class="progress-step active"></div>
+      <div class="progress-step"></div>
       <div class="progress-step"></div>
       <div class="progress-step"></div>
     </div>
@@ -837,19 +831,19 @@ Example: Help me manage my schedule, remind me of important tasks, and summarize
       </div>
       
       <div class="nav-buttons">
-        <button class="btn btn-secondary" onclick="goTo('screen-brain')">Back</button>
+        <button class="btn btn-secondary" onclick="goTo('screen-mission')">Back</button>
         <button class="btn btn-primary" onclick="goTo('screen-skills')">Next →</button>
       </div>
     </div>
   </div>
 
-  <!-- Screen 4: Skills -->
+  <!-- Screen 3: Skills -->
   <div class="screen" id="screen-skills">
     <div class="progress-bar">
       <div class="progress-step done"></div>
       <div class="progress-step done"></div>
-      <div class="progress-step done"></div>
       <div class="progress-step active"></div>
+      <div class="progress-step"></div>
       <div class="progress-step"></div>
     </div>
     
@@ -1022,12 +1016,12 @@ Example: Help me manage my schedule, remind me of important tasks, and summarize
       
       <div class="nav-buttons">
         <button class="btn btn-secondary" onclick="goTo('screen-channels')">Back</button>
-        <button class="btn btn-primary" onclick="goTo('screen-birth')">Next →</button>
+        <button class="btn btn-primary" onclick="goTo('screen-brain')">Next →</button>
       </div>
     </div>
   </div>
 
-  <!-- Screen 5: Spawn -->
+  <!-- Screen 4: Brain (Payment) -->
   <div class="screen" id="screen-birth">
     <div class="progress-bar">
       <div class="progress-step done"></div>
@@ -1062,6 +1056,146 @@ Example: Help me manage my schedule, remind me of important tasks, and summarize
       <button class="btn btn-ghost" onclick="goTo('screen-skills')" style="margin-top: 1rem;">
         ← Go back
       </button>
+    </div>
+  </div>
+
+  <!-- Screen: Docs -->
+  <div class="screen" id="screen-docs">
+    <div class="card card-wide">
+      <h2>📚 Documentation</h2>
+      <p class="bot-speak">"Everything you need to know."</p>
+      
+      <div style="margin: 1.5rem 0;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--accent);">Getting Started</h3>
+        <ul style="list-style: none; padding: 0;">
+          <li style="padding: 0.75rem; background: var(--bg); border-radius: 8px; margin-bottom: 0.5rem;">
+            <strong>1. Define your mission</strong> — Tell your bot what to focus on
+          </li>
+          <li style="padding: 0.75rem; background: var(--bg); border-radius: 8px; margin-bottom: 0.5rem;">
+            <strong>2. Connect channels</strong> — Telegram, WhatsApp, Discord
+          </li>
+          <li style="padding: 0.75rem; background: var(--bg); border-radius: 8px; margin-bottom: 0.5rem;">
+            <strong>3. Load skills</strong> — Add capabilities to your bot
+          </li>
+          <li style="padding: 0.75rem; background: var(--bg); border-radius: 8px; margin-bottom: 0.5rem;">
+            <strong>4. Pick a brain</strong> — Choose your AI model
+          </li>
+          <li style="padding: 0.75rem; background: var(--bg); border-radius: 8px; margin-bottom: 0.5rem;">
+            <strong>5. Spawn</strong> — Bring your bot to life
+          </li>
+        </ul>
+      </div>
+      
+      <div style="margin: 1.5rem 0;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--accent);">Resources</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <a href="https://docs.openclaw.ai" target="_blank" class="btn btn-secondary" style="text-decoration: none;">OpenClaw Docs</a>
+          <a href="https://clawhub.ai" target="_blank" class="btn btn-secondary" style="text-decoration: none;">ClawHub Skills</a>
+          <a href="https://discord.com/invite/clawd" target="_blank" class="btn btn-secondary" style="text-decoration: none;">Discord Community</a>
+          <a href="https://github.com/mcclowin/openclaw-deploy" target="_blank" class="btn btn-secondary" style="text-decoration: none;">GitHub Repo</a>
+        </div>
+      </div>
+      
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goTo('screen-landing')">← Back to Home</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen: Settings -->
+  <div class="screen" id="screen-settings">
+    <div class="card card-wide">
+      <h2>⚙️ Settings</h2>
+      <p class="bot-speak">"Customize me."</p>
+      
+      <div class="tabs" style="margin-bottom: 1.5rem;">
+        <button class="tab active" onclick="showSettingsTab('identity')">🤖 Identity</button>
+        <button class="tab" onclick="showSettingsTab('soul')">💫 Soul</button>
+        <button class="tab" onclick="showSettingsTab('channels')">📡 Channels</button>
+        <button class="tab" onclick="showSettingsTab('skills')">🔧 Skills</button>
+        <button class="tab" onclick="showSettingsTab('danger')">⚠️ Danger</button>
+      </div>
+      
+      <!-- Identity Tab -->
+      <div id="settings-identity" class="settings-content">
+        <div class="input-group">
+          <label>Bot Name</label>
+          <input type="text" value="" id="settings-name" placeholder="Your bot's name">
+        </div>
+        <div class="input-group">
+          <label>Avatar</label>
+          <div style="display: flex; gap: 1rem; align-items: center;">
+            <div style="width: 60px; height: 60px; background: var(--bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem;">🤖</div>
+            <button class="btn btn-secondary" style="padding: 0.5rem 1rem;">Change Avatar</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Soul Tab -->
+      <div id="settings-soul" class="settings-content" style="display: none;">
+        <div class="input-group">
+          <label>SOUL.md — Personality Prompt</label>
+          <textarea style="min-height: 200px;" placeholder="Define your bot's personality..."></textarea>
+        </div>
+        <div class="input-group">
+          <label>Personality Flavor</label>
+          <div class="flavor-chips">
+            <span class="flavor-chip" onclick="toggleFlavor(this)">🎭 Witty</span>
+            <span class="flavor-chip" onclick="toggleFlavor(this)">🧘 Calm</span>
+            <span class="flavor-chip" onclick="toggleFlavor(this)">⚡ Direct</span>
+            <span class="flavor-chip" onclick="toggleFlavor(this)">🤗 Warm</span>
+            <span class="flavor-chip" onclick="toggleFlavor(this)">🎩 Formal</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Channels Tab -->
+      <div id="settings-channels" class="settings-content" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--bg); border-radius: 8px;">
+            <span>📱 Telegram</span>
+            <span style="color: var(--success);">● Connected</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--bg); border-radius: 8px;">
+            <span>💬 WhatsApp</span>
+            <button class="btn btn-secondary" style="padding: 0.5rem 1rem;">Connect</button>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--bg); border-radius: 8px;">
+            <span>🎮 Discord</span>
+            <button class="btn btn-secondary" style="padding: 0.5rem 1rem;">Connect</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Skills Tab -->
+      <div id="settings-skills" class="settings-content" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg); border-radius: 8px;">
+            <span>📋 Productivity</span>
+            <span style="color: var(--success);">Active</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg); border-radius: 8px;">
+            <span>📰 News & Digest</span>
+            <span style="color: var(--success);">Active</span>
+          </div>
+        </div>
+        <button class="btn btn-secondary" style="width: 100%; margin-top: 1rem;">+ Add More Skills</button>
+      </div>
+      
+      <!-- Danger Tab -->
+      <div id="settings-danger" class="settings-content" style="display: none;">
+        <div class="info-box warning">
+          <div class="title">⚠️ Danger Zone</div>
+          These actions are destructive. Use with caution.
+        </div>
+        <button class="btn btn-secondary" style="width: 100%; margin-bottom: 0.75rem; border-color: var(--warning); color: var(--warning);">⏸️ Pause Bot</button>
+        <button class="btn btn-secondary" style="width: 100%; border-color: var(--error); color: var(--error);">💀 Delete Bot</button>
+      </div>
+      
+      <div class="nav-buttons" style="margin-top: 1.5rem;">
+        <button class="btn btn-secondary" onclick="goTo('screen-live')">← Back to Dashboard</button>
+        <button class="btn btn-primary">💾 Save Changes</button>
+      </div>
     </div>
   </div>
 
@@ -1119,7 +1253,7 @@ Example: Help me manage my schedule, remind me of important tasks, and summarize
         
         <div class="dashboard-card">
           <h3>⚡ Actions</h3>
-          <button class="btn btn-secondary" style="width: 100%; margin-bottom: 0.5rem; padding: 0.75rem;">⚙️ Settings</button>
+          <button class="btn btn-secondary" style="width: 100%; margin-bottom: 0.5rem; padding: 0.75rem;" onclick="goTo('screen-settings')">⚙️ Settings</button>
           <button class="btn btn-secondary" style="width: 100%; padding: 0.75rem;">📄 View Logs</button>
         </div>
       </div>
@@ -1162,6 +1296,13 @@ Example: Help me manage my schedule, remind me of important tasks, and summarize
       document.querySelectorAll('.skills-content').forEach(c => c.style.display = 'none');
       event.target.classList.add('active');
       document.getElementById('skills-' + tab).style.display = 'block';
+    }
+    
+    function showSettingsTab(tab) {
+      document.querySelectorAll('#screen-settings .tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('#screen-settings .settings-content').forEach(c => c.style.display = 'none');
+      event.target.classList.add('active');
+      document.getElementById('settings-' + tab).style.display = 'block';
     }
     
     function updateBirthSummary() {
