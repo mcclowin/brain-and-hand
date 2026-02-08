@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 100" width="180" height="100">
   <defs>
     <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#8b5cf6"/>
@@ -10,11 +10,8 @@
     </linearGradient>
   </defs>
   
-  <!-- Background circle -->
-  <circle cx="100" cy="100" r="95" fill="#0a0a0f" stroke="url(#grad)" stroke-width="2"/>
-  
   <!-- Brain (left side) - simplified neural pattern -->
-  <g transform="translate(35, 55)">
+  <g transform="translate(10, 10)">
     <!-- Brain outline -->
     <path d="M30 0 C45 0 55 10 55 25 C60 25 65 35 60 45 C65 50 60 65 50 70 C50 75 40 80 30 75 C20 80 10 75 10 70 C0 65 -5 50 0 45 C-5 35 0 25 5 25 C5 10 15 0 30 0" 
           fill="none" stroke="url(#grad)" stroke-width="2.5" stroke-linecap="round"/>
@@ -32,7 +29,7 @@
   </g>
   
   <!-- Hand (right side) - robotic/geometric -->
-  <g transform="translate(105, 60)">
+  <g transform="translate(100, 15)">
     <!-- Palm -->
     <rect x="10" y="25" width="35" height="40" rx="5" fill="none" stroke="url(#grad2)" stroke-width="2.5"/>
     <!-- Circuit pattern on palm -->
@@ -55,10 +52,10 @@
   </g>
   
   <!-- Connection beam between brain and hand -->
-  <path d="M88 100 Q100 95 112 100" stroke="url(#grad)" stroke-width="2" fill="none" stroke-dasharray="4 2" opacity="0.7"/>
+  <path d="M68 50 Q82 45 98 50" stroke="url(#grad)" stroke-width="2" fill="none" stroke-dasharray="4 2" opacity="0.7"/>
   
   <!-- Glow effect dots -->
-  <circle cx="100" cy="97" r="3" fill="#8b5cf6" opacity="0.8">
+  <circle cx="83" cy="47" r="3" fill="#8b5cf6" opacity="0.8">
     <animate attributeName="opacity" values="0.4;1;0.4" dur="2s" repeatCount="indefinite"/>
   </circle>
 </svg>
