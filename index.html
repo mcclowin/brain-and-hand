@@ -917,6 +917,88 @@
       background: rgba(34, 197, 94, 0.2);
       color: var(--success);
     }
+    
+    /* Settings Page */
+    .settings-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .settings-tab {
+      padding: 0.5rem 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .settings-tab:hover {
+      border-color: var(--text-muted);
+      color: var(--text);
+    }
+    
+    .settings-tab.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+    
+    .settings-section {
+      display: none;
+    }
+    
+    .settings-section.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    /* Theme Grid */
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+    
+    .theme-option {
+      text-align: center;
+      cursor: pointer;
+      padding: 0.5rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    
+    .theme-option:hover {
+      border-color: var(--text-muted);
+    }
+    
+    .theme-option.selected {
+      border-color: var(--accent);
+    }
+    
+    .theme-preview {
+      width: 100%;
+      height: 40px;
+      border-radius: 6px;
+      margin-bottom: 0.5rem;
+    }
+    
+    .theme-option span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    
+    .theme-option.selected span {
+      color: var(--text);
+    }
   </style>
 </head>
 <body>
@@ -1528,8 +1610,8 @@
         <!-- Quick Actions Card -->
         <div class="dashboard-card">
           <h3>Quick Actions</h3>
-          <button class="btn btn-secondary" style="width: 100%; margin-bottom: 0.5rem; padding: 0.75rem;">
-            ✏️ Edit SOUL.md
+          <button class="btn btn-primary" style="width: 100%; margin-bottom: 0.5rem; padding: 0.75rem;" onclick="goTo('screen-settings')">
+            ⚙️ Settings
           </button>
           <button class="btn btn-secondary" style="width: 100%; margin-bottom: 0.5rem; padding: 0.75rem;">
             📊 View logs
@@ -1550,6 +1632,371 @@
           </button>
           <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.75rem;">
             Kill switch is reversible. Nuke is permanent and requires re-authentication.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 8: Settings -->
+  <div class="screen" id="screen-settings">
+    <div class="dashboard" style="max-width: 700px;">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+        <button class="btn btn-ghost" onclick="goTo('screen-live')" style="padding: 0.5rem;">
+          ← Back
+        </button>
+        <h2 style="margin: 0;">⚙️ Settings</h2>
+      </div>
+      
+      <!-- Settings Navigation -->
+      <div class="settings-nav">
+        <button class="settings-tab active" onclick="showSettingsSection('identity')">🤖 Identity</button>
+        <button class="settings-tab" onclick="showSettingsSection('soul')">💫 Soul</button>
+        <button class="settings-tab" onclick="showSettingsSection('model')">🧠 Model</button>
+        <button class="settings-tab" onclick="showSettingsSection('channels')">📡 Channels</button>
+        <button class="settings-tab" onclick="showSettingsSection('finances')">💰 Finances</button>
+        <button class="settings-tab" onclick="showSettingsSection('appearance')">🎨 Appearance</button>
+        <button class="settings-tab" onclick="showSettingsSection('danger')">⚠️ Danger</button>
+      </div>
+      
+      <!-- Identity Section -->
+      <div class="settings-section active" id="settings-identity">
+        <div class="card" style="max-width: 100%;">
+          <h3 style="margin-bottom: 1rem;">🤖 Identity</h3>
+          
+          <div class="input-group">
+            <label>Bot Name</label>
+            <input type="text" value="Axiom" id="settings-name">
+          </div>
+          
+          <div class="input-group">
+            <label>Voice Archetype</label>
+            <select id="settings-archetype">
+              <option value="butler">🎩 British Butler</option>
+              <option value="ship" selected>🛸 Ship Computer</option>
+              <option value="playful">🤖 Playful AI</option>
+              <option value="algorithm">🔢 Algorithm</option>
+              <option value="warm">💫 Warm Synthetic</option>
+              <option value="retro">📼 Retro Bot</option>
+              <option value="glitch">⚡ Glitch</option>
+            </select>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
+              Auto-generated at deployment. Change to customize your bot's voice.
+            </div>
+          </div>
+          
+          <div class="input-group">
+            <label>Voice ID</label>
+            <input type="text" value="AXM-SHP-A7F" disabled style="font-family: 'SF Mono', monospace; background: var(--bg-secondary);">
+          </div>
+          
+          <div class="input-row">
+            <div class="input-group">
+              <label>Birthday</label>
+              <input type="date" value="2004-02-08" id="settings-birthday">
+            </div>
+            <div class="input-group">
+              <label>Age</label>
+              <input type="text" value="22 years old" disabled style="background: var(--bg-secondary);">
+            </div>
+          </div>
+          
+          <div class="info-box" style="margin-top: 1rem;">
+            <div class="title">🎂 Why Birthday?</div>
+            Used for age-gated platforms. Auto-derived from deployment timestamp but customizable here.
+          </div>
+          
+          <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+            💾 Save Identity
+          </button>
+        </div>
+      </div>
+      
+      <!-- Soul Section -->
+      <div class="settings-section" id="settings-soul">
+        <div class="card" style="max-width: 100%;">
+          <h3 style="margin-bottom: 1rem;">💫 Soul (Personality)</h3>
+          
+          <div class="input-group">
+            <label>Personality Preset</label>
+            <div class="presets">
+              <span class="preset" onclick="selectPreset(this, 'chill')">🧘 Chill</span>
+              <span class="preset active" onclick="selectPreset(this, 'sharp')">⚡ Sharp</span>
+              <span class="preset" onclick="selectPreset(this, 'chaos')">🎭 Chaos</span>
+              <span class="preset" onclick="selectPreset(this, 'custom')">✏️ Custom</span>
+            </div>
+          </div>
+          
+          <div class="input-group">
+            <label>SOUL.md</label>
+            <textarea style="min-height: 200px;">You are Axiom, a sharp and efficient AI assistant. You're direct, helpful, and slightly witty. You don't waste words but you're never cold. When you don't know something, you say so. You're here to get things done.</textarea>
+          </div>
+          
+          <div class="prompt-hint">
+            <span class="prompt-hint-icon">✨</span>
+            <input type="text" class="prompt-hint-input" placeholder="Add flavor: e.g., 'occasionally references sci-fi movies'...">
+          </div>
+          
+          <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+            💾 Save Soul
+          </button>
+        </div>
+      </div>
+      
+      <!-- Model Section -->
+      <div class="settings-section" id="settings-model">
+        <div class="card" style="max-width: 100%;">
+          <h3 style="margin-bottom: 1rem;">🧠 Model & API</h3>
+          
+          <div class="input-group">
+            <label>LLM Provider</label>
+            <select>
+              <option value="anthropic" selected>Anthropic (Claude)</option>
+              <option value="openai">OpenAI (GPT-4)</option>
+              <option value="deepseek">DeepSeek</option>
+              <option value="ollama">Ollama (Local)</option>
+            </select>
+          </div>
+          
+          <div class="input-group">
+            <label>Model</label>
+            <select>
+              <option value="claude-3-opus">Claude 3 Opus</option>
+              <option value="claude-3-sonnet" selected>Claude 3.5 Sonnet</option>
+              <option value="claude-3-haiku">Claude 3 Haiku</option>
+            </select>
+          </div>
+          
+          <div class="input-group">
+            <label>API Key</label>
+            <input type="password" value="sk-ant-••••••••••••••••••••">
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
+              🔐 Stored encrypted. Never sent to our servers.
+            </div>
+          </div>
+          
+          <div class="input-group">
+            <label>Voice Provider</label>
+            <select>
+              <option value="elevenlabs" selected>ElevenLabs</option>
+              <option value="openai">OpenAI TTS</option>
+              <option value="local">Local (Piper)</option>
+              <option value="none">Disabled</option>
+            </select>
+          </div>
+          
+          <div class="stat-item" style="margin-top: 1rem;">
+            <span class="stat-label">Est. Monthly Cost</span>
+            <span class="stat-value" style="color: var(--success);">~$12/mo</span>
+          </div>
+          
+          <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+            💾 Save Model Settings
+          </button>
+        </div>
+      </div>
+      
+      <!-- Channels Section -->
+      <div class="settings-section" id="settings-channels">
+        <div class="card" style="max-width: 100%;">
+          <h3 style="margin-bottom: 1rem;">📡 Channels</h3>
+          
+          <div class="channel-list">
+            <div class="channel-item connected">
+              <span class="channel-icon">📱</span>
+              <div class="channel-info">
+                <div class="channel-name">Telegram</div>
+                <div class="channel-status">@AxiomBot · Online</div>
+              </div>
+              <button class="btn btn-ghost" style="font-size: 0.75rem;">Edit</button>
+            </div>
+            
+            <div class="channel-item connected">
+              <span class="channel-icon">💬</span>
+              <div class="channel-info">
+                <div class="channel-name">WhatsApp</div>
+                <div class="channel-status">+1 234 567 8900 · Online</div>
+              </div>
+              <button class="btn btn-ghost" style="font-size: 0.75rem;">Edit</button>
+            </div>
+            
+            <div class="channel-item connected">
+              <span class="channel-icon">📞</span>
+              <div class="channel-info">
+                <div class="channel-name">Voice Call</div>
+                <div class="channel-status">+1 (555) 012-3456 · Online</div>
+              </div>
+              <button class="btn btn-ghost" style="font-size: 0.75rem;">Edit</button>
+            </div>
+            
+            <div class="channel-item">
+              <span class="channel-icon">🎮</span>
+              <div class="channel-info">
+                <div class="channel-name">Discord</div>
+                <div class="channel-status">Not configured</div>
+              </div>
+              <button class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.5rem 1rem;">Connect</button>
+            </div>
+            
+            <div class="channel-item">
+              <span class="channel-icon">💼</span>
+              <div class="channel-info">
+                <div class="channel-name">Slack</div>
+                <div class="channel-status">Not configured</div>
+              </div>
+              <button class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.5rem 1rem;">Connect</button>
+            </div>
+          </div>
+          
+          <button class="btn btn-secondary" style="width: 100%; margin-top: 1rem;">
+            ➕ Add Channel
+          </button>
+        </div>
+      </div>
+      
+      <!-- Finances Section -->
+      <div class="settings-section" id="settings-finances">
+        <div class="card" style="max-width: 100%;">
+          <h3 style="margin-bottom: 1rem;">💰 Finances</h3>
+          
+          <div class="input-group">
+            <label>Wallet Address</label>
+            <input type="text" value="0x7a3d8B2c...9F4e8f2e" disabled style="font-family: 'SF Mono', monospace; background: var(--bg-secondary);">
+            <button class="btn btn-ghost" style="margin-top: 0.5rem; font-size: 0.75rem;">📋 Copy Full Address</button>
+          </div>
+          
+          <div class="input-row">
+            <div class="input-group">
+              <label>Daily Spending Limit</label>
+              <input type="number" value="50" style="font-family: 'SF Mono', monospace;">
+            </div>
+            <div class="input-group">
+              <label>Currency</label>
+              <select>
+                <option value="usd" selected>USD</option>
+                <option value="eur">EUR</option>
+                <option value="eth">ETH</option>
+              </select>
+            </div>
+          </div>
+          
+          <h4 style="margin: 1.5rem 0 1rem; font-size: 0.9rem; color: var(--text-muted);">Linked Cards</h4>
+          
+          <div class="card-item">
+            <span class="card-icon">💳</span>
+            <div class="card-info">
+              <div class="card-name">Gnosis Pay</div>
+              <div class="card-number">•••• 4829</div>
+            </div>
+            <button class="btn btn-ghost" style="font-size: 0.75rem; color: var(--error);">Remove</button>
+          </div>
+          
+          <button class="btn btn-secondary" style="width: 100%; margin-top: 0.5rem;">
+            ➕ Link New Card
+          </button>
+          
+          <div class="info-box" style="margin-top: 1rem;">
+            <div class="title">🔐 Recovery</div>
+            Wallet is recoverable via email: m•••d@gmail.com
+          </div>
+          
+          <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+            💾 Save Finance Settings
+          </button>
+        </div>
+      </div>
+      
+      <!-- Appearance Section -->
+      <div class="settings-section" id="settings-appearance">
+        <div class="card" style="max-width: 100%;">
+          <h3 style="margin-bottom: 1rem;">🎨 Appearance</h3>
+          
+          <div class="input-group">
+            <label>Theme</label>
+            <div class="theme-grid">
+              <div class="theme-option selected" onclick="selectTheme(this, 'default')">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);"></div>
+                <span>Default</span>
+              </div>
+              <div class="theme-option" onclick="selectTheme(this, 'lunar')">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #58a6ff, #ffa657);"></div>
+                <span>Lunar</span>
+              </div>
+              <div class="theme-option" onclick="selectTheme(this, 'ember')">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #f97316, #ef4444);"></div>
+                <span>Ember</span>
+              </div>
+              <div class="theme-option" onclick="selectTheme(this, 'forest')">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #4ade80, #16a34a);"></div>
+                <span>Forest</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="input-group">
+            <label>Avatar</label>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--accent), var(--accent-secondary, var(--accent))); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">
+                🤖
+              </div>
+              <div>
+                <button class="btn btn-secondary" style="margin-bottom: 0.5rem;">📤 Upload New</button><br>
+                <button class="btn btn-ghost" style="font-size: 0.75rem;">✨ Regenerate</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="input-group">
+            <label>Accent Color</label>
+            <input type="color" value="#8b5cf6" style="width: 60px; height: 40px; padding: 0; border: none; border-radius: 8px; cursor: pointer;">
+          </div>
+          
+          <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+            💾 Save Appearance
+          </button>
+        </div>
+      </div>
+      
+      <!-- Danger Zone Section -->
+      <div class="settings-section" id="settings-danger">
+        <div class="card danger-zone" style="max-width: 100%;">
+          <h3 style="margin-bottom: 1rem; color: var(--error);">⚠️ Danger Zone</h3>
+          
+          <div class="input-group">
+            <label>Kill Switch</label>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <button class="btn btn-warning" onclick="toggleKillSwitch()" style="flex: 1;">
+                ⏸️ Pause Bot
+              </button>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Reversible</span>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
+              Immediately stops all bot responses. Can be resumed anytime.
+            </div>
+          </div>
+          
+          <hr style="border: none; border-top: 1px solid var(--border); margin: 1.5rem 0;">
+          
+          <div class="input-group">
+            <label>Export Data</label>
+            <button class="btn btn-secondary" style="width: 100%;">
+              📦 Download All Bot Data
+            </button>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
+              Includes config, memory, conversations, skills.
+            </div>
+          </div>
+          
+          <hr style="border: none; border-top: 1px solid var(--border); margin: 1.5rem 0;">
+          
+          <div class="input-group">
+            <label style="color: var(--error);">Nuke Bot</label>
+            <button class="btn btn-danger" onclick="showNukeModal()" style="width: 100%;">
+              💀 Permanently Destroy Bot
+            </button>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
+              Irreversible. Deletes everything. Requires email verification.
+            </div>
           </div>
         </div>
       </div>
@@ -1723,6 +2170,24 @@
     
     function playVoiceSample() {
       alert('🔊 "Hey! I\'m Axiom, your personal AI assistant. How can I help you today?"');
+    }
+    
+    // Settings page navigation
+    function showSettingsSection(section) {
+      // Update tabs
+      document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      // Update sections
+      document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+      document.getElementById('settings-' + section).classList.add('active');
+    }
+    
+    function selectTheme(el, theme) {
+      document.querySelectorAll('.theme-option').forEach(t => t.classList.remove('selected'));
+      el.classList.add('selected');
+      // In real implementation, would apply theme
+      console.log('Selected theme:', theme);
     }
     
     function generateAvatar() {
