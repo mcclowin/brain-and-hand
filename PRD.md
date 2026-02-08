@@ -78,6 +78,26 @@ Guided per-channel setup wizards:
 | **Signal** | signal-cli daemon | P2 |
 | **Matrix** | Homeserver + token | P2 |
 | **iMessage** | macOS only, native API | P3 |
+| **Voice Call** | Phone number (Twilio/Telnyx) | P1 |
+
+### Voice Channel (Call Your Bot)
+
+Your bot can have a phone number. Call it, talk to it, listen to responses.
+
+| Feature | Description |
+|---|---|
+| **Inbound calls** | Call your bot's number, speak, get voice response |
+| **Outbound calls** | Bot can call you (alerts, reminders) |
+| **Voice providers** | Twilio, Telnyx, or WebRTC |
+| **TTS** | ElevenLabs, OpenAI TTS, or local |
+| **STT** | Whisper, Deepgram, or provider-native |
+| **Wake word** | Optional "Hey [bot name]" activation |
+
+Voice is surprisingly natural for:
+- Hands-free queries while driving
+- Quick check-ins ("What's on my calendar?")
+- Accessibility (vision impaired users)
+- The "AI from the movies" vibe
 
 Each wizard:
 - Step-by-step with screenshots

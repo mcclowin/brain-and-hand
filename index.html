@@ -957,9 +957,36 @@
         <input type="text" placeholder="sk-ant-..." id="api-key">
       </div>
       
-      <div style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1rem;">
+      <div style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1.5rem;">
         💰 Estimated cost: <strong style="color: var(--success);">~$5-15/mo</strong> at casual usage
       </div>
+      
+      <h2 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Voice (optional)</h2>
+      <p class="bot-speak" style="margin-bottom: 1rem;">"How should I sound?"</p>
+      
+      <div class="input-group">
+        <label>TTS Provider</label>
+        <select>
+          <option value="elevenlabs" selected>ElevenLabs (best quality)</option>
+          <option value="openai">OpenAI TTS</option>
+          <option value="local">Local (Piper)</option>
+          <option value="none">No voice</option>
+        </select>
+      </div>
+      
+      <div class="input-group">
+        <label>Voice</label>
+        <div class="presets">
+          <span class="preset" onclick="selectVoice(this)">🎭 Rachel (warm)</span>
+          <span class="preset active" onclick="selectVoice(this)">🎯 Adam (clear)</span>
+          <span class="preset" onclick="selectVoice(this)">🌊 Bella (soft)</span>
+          <span class="preset" onclick="selectVoice(this)">⚡ Antoni (energetic)</span>
+        </div>
+      </div>
+      
+      <button class="btn btn-secondary" style="width: 100%; margin-bottom: 1rem;" onclick="playVoiceSample()">
+        🔊 Play sample
+      </button>
       
       <div class="nav-buttons">
         <button class="btn btn-secondary" onclick="goTo('screen-soul')">Back</button>
@@ -1028,6 +1055,20 @@
           </div>
           <span class="channel-badge">P2</span>
         </div>
+        
+        <div class="channel-item selected" onclick="toggleChannel(this)" style="border-color: var(--accent); background: rgba(139, 92, 246, 0.05);">
+          <span class="channel-icon">📞</span>
+          <div class="channel-info">
+            <div class="channel-name">Voice Call <span class="skill-badge">NEW</span></div>
+            <div class="channel-status">Call your bot, talk to it, listen to responses</div>
+          </div>
+          <span class="channel-badge p0">P1</span>
+        </div>
+      </div>
+      
+      <div class="info-box">
+        <div class="title">📞 Voice Channel</div>
+        Your bot gets a phone number. Call it anytime — perfect for hands-free queries, driving, or that sci-fi AI assistant vibe.
       </div>
       
       <div class="nav-buttons">
@@ -1243,9 +1284,36 @@
             <span class="stat-value online">● Online</span>
           </div>
           <div class="stat-item">
+            <span class="stat-label">📞 Voice</span>
+            <span class="stat-value online">● +1 (555) 012-3456</span>
+          </div>
+          <div class="stat-item">
             <span class="stat-label">🎮 Discord</span>
             <span class="stat-value">Not configured</span>
           </div>
+        </div>
+        
+        <!-- Voice Card -->
+        <div class="dashboard-card" style="background: linear-gradient(135deg, var(--bg-card) 0%, #1e1e2e 100%);">
+          <h3>📞 Voice</h3>
+          <div style="font-family: 'SF Mono', monospace; font-size: 1.25rem; margin-bottom: 1rem; color: var(--accent);">
+            +1 (555) 012-3456
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">TTS Voice</span>
+            <span class="stat-value">ElevenLabs (Rachel)</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Calls today</span>
+            <span class="stat-value">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Avg call length</span>
+            <span class="stat-value">—</span>
+          </div>
+          <button class="btn btn-secondary" style="width: 100%; margin-top: 0.75rem; padding: 0.75rem;">
+            🎙️ Test call (ring my phone)
+          </button>
         </div>
         
         <!-- Skills Card -->
@@ -1423,6 +1491,15 @@
       } else {
         alert('Please type "NUKE AXIOM" exactly to confirm.');
       }
+    }
+    
+    function selectVoice(el) {
+      el.parentElement.querySelectorAll('.preset').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+    }
+    
+    function playVoiceSample() {
+      alert('🔊 "Hey! I\'m Axiom, your personal AI assistant. How can I help you today?"');
     }
   </script>
 
