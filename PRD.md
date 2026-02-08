@@ -57,7 +57,8 @@ BotsAndBrain makes the leap from "I want a personal bot" to "my bot is live" eff
 - SOUL.md editor — personality prompt
 - Presets: `chill philosopher` / `sharp assistant` / `chaos agent` / `custom`
 - Live preview: show sample bot response for each personality
-- Gender preference (optional) — for voice and avatar generation
+- **No voice archetype selection** — auto-generated at deployment
+- **No birthday selection** — derived from deployment timestamp
 - **No avatar yet** — generated at final step with full context
 
 ### 4.3 Pick Model
