@@ -1111,6 +1111,7 @@ Example: Help me manage my schedule, remind me of important tasks, and summarize
       <div class="tabs" style="margin-bottom: 1.5rem;">
         <button class="tab active" onclick="showSettingsTab('identity')">🤖 Identity</button>
         <button class="tab" onclick="showSettingsTab('soul')">💫 Soul</button>
+        <button class="tab" onclick="showSettingsTab('wallet')">💰 Wallet</button>
         <button class="tab" onclick="showSettingsTab('channels')">📡 Channels</button>
         <button class="tab" onclick="showSettingsTab('skills')">🔧 Skills</button>
         <button class="tab" onclick="showSettingsTab('danger')">⚠️ Danger</button>
@@ -1129,6 +1130,21 @@ Example: Help me manage my schedule, remind me of important tasks, and summarize
             <button class="btn btn-secondary" style="padding: 0.5rem 1rem;">Change Avatar</button>
           </div>
         </div>
+        <div class="input-group">
+          <label>Birthday</label>
+          <input type="date" value="2003-06-15" id="settings-birthday">
+          <p class="hint">Used for age-gated platforms. Your bot needs to be "old enough" to use some services.</p>
+        </div>
+        <div class="input-group">
+          <label>Model</label>
+          <select id="settings-model">
+            <option value="claude-opus">Claude Opus 4.5</option>
+            <option value="claude-sonnet">Claude Sonnet 4</option>
+            <option value="gpt-4">GPT-4 Turbo</option>
+            <option value="deepseek">DeepSeek</option>
+            <option value="local">Local (Ollama)</option>
+          </select>
+        </div>
       </div>
       
       <!-- Soul Tab -->
@@ -1146,6 +1162,69 @@ Example: Help me manage my schedule, remind me of important tasks, and summarize
             <span class="flavor-chip" onclick="toggleFlavor(this)">🤗 Warm</span>
             <span class="flavor-chip" onclick="toggleFlavor(this)">🎩 Formal</span>
           </div>
+        </div>
+      </div>
+      
+      <!-- Wallet Tab -->
+      <div id="settings-wallet" class="settings-content" style="display: none;">
+        <div class="info-box">
+          <div class="title">💰 Bot Wallet</div>
+          Give your bot spending power with a crypto wallet. Uses Account Abstraction (AA) for email recovery — no seed phrases.
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.5rem;">
+          <div style="padding: 1rem; background: var(--bg); border-radius: 8px; text-align: center;">
+            <div style="font-size: 1.5rem; font-weight: 700; font-family: monospace;">$0.00</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">USDC Balance</div>
+          </div>
+          <div style="padding: 1rem; background: var(--bg); border-radius: 8px; text-align: center;">
+            <div style="font-size: 1.5rem; font-weight: 700; font-family: monospace;">0.00 ETH</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Gas Wallet</div>
+          </div>
+        </div>
+        
+        <div style="font-weight: 600; margin-bottom: 0.75rem;">Spending Cards</div>
+        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: var(--bg); border-radius: 8px;">
+            <span style="font-size: 1.25rem;">💳</span>
+            <div style="flex: 1;">
+              <div style="font-weight: 600; font-size: 0.9rem;">Gnosis Pay</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">Crypto debit card</div>
+            </div>
+            <button class="btn btn-secondary" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;">Connect</button>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: var(--bg); border-radius: 8px;">
+            <span style="font-size: 1.25rem;">💳</span>
+            <div style="flex: 1;">
+              <div style="font-weight: 600; font-size: 0.9rem;">Holyheld</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">USDT-backed virtual card</div>
+            </div>
+            <button class="btn btn-secondary" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;">Connect</button>
+          </div>
+        </div>
+        
+        <div style="font-weight: 600; margin-bottom: 0.75rem;">Payment Methods</div>
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: var(--bg); border-radius: 8px;">
+            <span style="font-size: 1.25rem;">⚡</span>
+            <div style="flex: 1;">
+              <div style="font-weight: 600; font-size: 0.9rem;">x402 Payments</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">Pay-per-request HTTP payments</div>
+            </div>
+            <span style="color: var(--success); font-size: 0.8rem;">● Active</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: var(--bg); border-radius: 8px;">
+            <span style="font-size: 1.25rem;">🪙</span>
+            <div style="flex: 1;">
+              <div style="font-weight: 600; font-size: 0.9rem;">USDC Direct</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">On-chain payments</div>
+            </div>
+            <button class="btn btn-secondary" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;">Setup</button>
+          </div>
+        </div>
+        
+        <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-muted);">
+          Daily spending limit: <strong style="color: var(--text);">$50</strong> · AA wallet · Email recovery
         </div>
       </div>
       
@@ -1186,10 +1265,20 @@ Example: Help me manage my schedule, remind me of important tasks, and summarize
       <div id="settings-danger" class="settings-content" style="display: none;">
         <div class="info-box warning">
           <div class="title">⚠️ Danger Zone</div>
-          These actions are destructive. Use with caution.
+          These actions affect your bot's operation. Use with caution.
         </div>
-        <button class="btn btn-secondary" style="width: 100%; margin-bottom: 0.75rem; border-color: var(--warning); color: var(--warning);">⏸️ Pause Bot</button>
-        <button class="btn btn-secondary" style="width: 100%; border-color: var(--error); color: var(--error);">💀 Delete Bot</button>
+        
+        <div style="background: var(--bg); padding: 1.25rem; border-radius: 8px; margin-bottom: 1rem;">
+          <div style="font-weight: 600; margin-bottom: 0.5rem;">⏸️ Kill Switch (Pause)</div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Immediately stop your bot from responding. Reversible with one click.</p>
+          <button class="btn btn-secondary" style="width: 100%; border-color: var(--warning); color: var(--warning);">⏸️ Pause Bot</button>
+        </div>
+        
+        <div style="background: var(--bg); padding: 1.25rem; border-radius: 8px; border: 1px solid var(--error);">
+          <div style="font-weight: 600; margin-bottom: 0.5rem; color: var(--error);">💀 Nuke Button (Destroy)</div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Full wipe — config, memory, sessions, credentials. This is permanent and requires re-authentication.</p>
+          <button class="btn btn-secondary" style="width: 100%; border-color: var(--error); color: var(--error);">💀 Nuke Bot</button>
+        </div>
       </div>
       
       <div class="nav-buttons" style="margin-top: 1.5rem;">
@@ -1228,14 +1317,18 @@ Example: Help me manage my schedule, remind me of important tasks, and summarize
         </div>
         
         <div class="dashboard-card">
-          <h3>📊 Stats</h3>
+          <h3>💰 Wallet</h3>
           <div class="stat-item">
-            <span>Messages today</span>
-            <span class="stat-value">0</span>
+            <span>USDC Balance</span>
+            <span class="stat-value" style="font-family: monospace;">$0.00</span>
           </div>
           <div class="stat-item">
-            <span>Est. cost today</span>
-            <span class="stat-value">$0.00</span>
+            <span>💳 Gnosis Pay</span>
+            <span class="stat-value online">Active</span>
+          </div>
+          <div class="stat-item">
+            <span>⚡ x402</span>
+            <span class="stat-value online">Active</span>
           </div>
         </div>
         
