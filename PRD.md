@@ -100,32 +100,38 @@ Voice is surprisingly natural for:
 - Accessibility (vision impaired users)
 - The "AI from the movies" vibe
 
-### Procedural Voice Generation
+### Procedural Robot Voice Generation
 
-Every bot deserves a unique voice. We generate voice parameters deterministically from inputs:
+Every bot deserves a unique **robot voice**. No fake humans — we're honest about being AI.
 
-**Inputs:**
-- Bot name (hashed for seed)
-- Gender preference (male/female/neutral/any)
-- Personality type (sharp/chill/chaos/custom)
-- Optional: age range, accent preference
+**Voice Archetypes (inspired by cinema):**
+| Archetype | Inspiration | Vibe |
+|-----------|-------------|------|
+| **Ship Computer** | HAL 9000, Auto | Calm, measured, slightly unsettling |
+| **British Butler** | JARVIS, C-3PO | Sophisticated, formal, helpful |
+| **Playful AI** | TARS (Interstellar) | Humor dial, friendly |
+| **Warm Synthetic** | Samantha (Her) | Emotional but clearly AI |
+| **Algorithm** | Hawking-style synth | Pure synthetic, mathematical |
+| **Retro Bot** | 80s text-to-speech | Nostalgic, chunky |
+| **Glitch** | Corrupted AI | Experimental, artistic |
 
-**Output parameters (combined = 1B+ unique voices):**
-- Pitch (100 levels)
-- Speed (50 levels)
-- Warmth (50 levels)
-- Clarity (50 levels)
-- Breathiness (20 levels)
-- Accent blend (100+ accents)
+**Generation Parameters:**
+- Warmth (0-100): cold/clinical → warm/friendly
+- Humanity (0-100): robotic/synthetic → organic/natural
+- Formality (0-100): casual → British scientist
+- Era (0-100): 80s synth → modern AI
+- Humor (0-100): serious → playful
+- Glitch (0-100): clean → corrupted
 
-**Formula:** `voice_seed = hash(name + gender + personality)` → deterministic but unique
+**Formula:** `voice_seed = hash(name + personality + archetype)` → 1B+ unique robot voices
+
+**No gender axis** — robots transcend human categories. The voice is shaped by personality and function, not biology.
 
 **Provider support:**
-- ElevenLabs Voice Design API
-- OpenAI voice mixing (when available)
-- Fallback: curated voice + pitch shift
-
-User can always override with manual selection or custom voice clone.
+- ElevenLabs Voice Design API (best)
+- Robotic voice synthesis libraries
+- Vocoder + pitch processing
+- Fallback: curated robot voice bank
 
 Each wizard:
 - Step-by-step with screenshots

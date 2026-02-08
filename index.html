@@ -864,12 +864,17 @@
       </div>
       
       <div class="input-group">
-        <label>Gender presentation (for voice & avatar)</label>
+        <label>Voice archetype</label>
         <div class="presets">
-          <span class="preset" onclick="selectGender(this, 'male')">♂️ Male</span>
-          <span class="preset" onclick="selectGender(this, 'female')">♀️ Female</span>
-          <span class="preset active" onclick="selectGender(this, 'neutral')">⚧️ Neutral</span>
-          <span class="preset" onclick="selectGender(this, 'any')">🎲 Surprise me</span>
+          <span class="preset active" onclick="selectArchetype(this, 'butler')">🎩 British Butler</span>
+          <span class="preset" onclick="selectArchetype(this, 'ship')">🛸 Ship Computer</span>
+          <span class="preset" onclick="selectArchetype(this, 'playful')">🤖 Playful AI</span>
+          <span class="preset" onclick="selectArchetype(this, 'algorithm')">🔢 Algorithm</span>
+        </div>
+        <div class="presets" style="margin-top: 0.5rem;">
+          <span class="preset" onclick="selectArchetype(this, 'warm')">💫 Warm Synthetic</span>
+          <span class="preset" onclick="selectArchetype(this, 'retro')">📼 Retro Bot</span>
+          <span class="preset" onclick="selectArchetype(this, 'glitch')">⚡ Glitch</span>
         </div>
       </div>
       
@@ -977,27 +982,31 @@
       </div>
       
       <div class="info-box" style="background: var(--bg); border-color: var(--border);">
-        <div class="title">🎙️ Auto-Generated Voice</div>
+        <div class="title">🤖 Robot Voice Signature</div>
         <div style="font-family: 'SF Mono', monospace; margin: 0.75rem 0; padding: 0.75rem; background: var(--bg-secondary); border-radius: 6px;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
             <span style="color: var(--text-muted);">Voice ID:</span>
-            <span id="voice-id">AXM-7F2-NEU</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-            <span style="color: var(--text-muted);">Pitch:</span>
-            <span id="voice-pitch">+12%</span>
+            <span id="voice-id">AXM-BTL-7F2</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
             <span style="color: var(--text-muted);">Warmth:</span>
             <span id="voice-warmth">67/100</span>
           </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span style="color: var(--text-muted);">Humanity:</span>
+            <span id="voice-humanity">42/100</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span style="color: var(--text-muted);">Formality:</span>
+            <span id="voice-formality">78/100</span>
+          </div>
           <div style="display: flex; justify-content: space-between;">
-            <span style="color: var(--text-muted);">Speed:</span>
-            <span id="voice-speed">1.05x</span>
+            <span style="color: var(--text-muted);">Era:</span>
+            <span id="voice-era">Modern AI</span>
           </div>
         </div>
         <div style="font-size: 0.75rem; color: var(--text-muted);">
-          Generated from name + gender + personality. 1B+ unique combinations.
+          Pure robot voice. No fake humans — we're honest about being AI. 🤖
         </div>
       </div>
       
@@ -1272,7 +1281,7 @@
         <ul style="margin-top: 0.5rem; margin-left: 1.25rem; color: var(--text-muted); font-size: 0.85rem;">
           <li>Name: <strong style="color: var(--text);">Axiom</strong></li>
           <li>Personality: <strong style="color: var(--text);">Sharp assistant</strong></li>
-          <li>Gender: <strong style="color: var(--text);">Neutral</strong></li>
+          <li>Voice: <strong style="color: var(--text);">British Butler 🎩</strong></li>
           <li>Skills: <strong style="color: var(--text);">Productivity, Summarizer, Dev Tools</strong></li>
           <li>Vibe: <strong style="color: var(--text);">Technical + Professional</strong></li>
         </ul>
@@ -1304,7 +1313,7 @@
       
       <div class="input-group">
         <label>Generated prompt</label>
-        <textarea id="avatar-prompt" style="min-height: 80px; font-size: 0.8rem;" readonly>Avatar for AI assistant "Axiom". Sharp, efficient personality. Neutral gender presentation. Technical/productivity focus. Modern, clean, professional aesthetic. Geometric or abstract style preferred.</textarea>
+        <textarea id="avatar-prompt" style="min-height: 80px; font-size: 0.8rem;" readonly>Robot avatar for AI assistant "Axiom". Sharp, efficient personality. British Butler voice archetype - sophisticated and formal. Technical/productivity focus. Robotic/synthetic aesthetic. Modern AI meets classic sci-fi. No human features - clearly a machine intelligence.</textarea>
       </div>
       
       <div class="nav-buttons">
@@ -1583,33 +1592,44 @@
       }
     }
     
-    let selectedGender = 'neutral';
+    let selectedArchetype = 'butler';
     
-    function selectGender(el, gender) {
-      el.parentElement.querySelectorAll('.preset').forEach(p => p.classList.remove('active'));
+    const archetypes = {
+      butler: { warmth: 65, humanity: 55, formality: 85, era: 'Modern AI', code: 'BTL' },
+      ship: { warmth: 30, humanity: 20, formality: 70, era: 'HAL-9000', code: 'SHP' },
+      playful: { warmth: 80, humanity: 60, formality: 30, era: 'Modern AI', code: 'PLY' },
+      algorithm: { warmth: 20, humanity: 10, formality: 90, era: 'Hawking Synth', code: 'ALG' },
+      warm: { warmth: 90, humanity: 75, formality: 50, era: 'Modern AI', code: 'WRM' },
+      retro: { warmth: 40, humanity: 15, formality: 60, era: '80s Synth', code: 'RTR' },
+      glitch: { warmth: 50, humanity: 30, formality: 40, era: 'Corrupted', code: 'GLT' }
+    };
+    
+    function selectArchetype(el, archetype) {
+      document.querySelectorAll('.input-group .preset').forEach(p => p.classList.remove('active'));
       el.classList.add('active');
-      selectedGender = gender;
+      selectedArchetype = archetype;
       updateVoicePreview();
     }
     
     function updateVoicePreview() {
       const name = document.getElementById('bot-name').value || 'Bot';
-      const hash = hashCode(name + selectedGender);
+      const arch = archetypes[selectedArchetype];
+      const hash = hashCode(name + selectedArchetype);
       
-      // Generate deterministic voice params from hash
-      const pitch = ((hash % 40) - 20);
-      const warmth = 40 + (Math.abs(hash >> 8) % 60);
-      const speed = 0.9 + ((Math.abs(hash >> 16) % 30) / 100);
+      // Add variation based on name hash
+      const warmthVar = arch.warmth + ((hash % 20) - 10);
+      const humanityVar = arch.humanity + ((hash >> 4) % 20 - 10);
+      const formalityVar = arch.formality + ((hash >> 8) % 20 - 10);
       
-      const genderCode = {male: 'M', female: 'F', neutral: 'N', any: 'X'}[selectedGender];
       const voiceId = name.substring(0, 3).toUpperCase() + '-' + 
-                      Math.abs(hash % 1000).toString(16).toUpperCase().padStart(3, '0') + '-' + 
-                      genderCode;
+                      arch.code + '-' + 
+                      Math.abs(hash % 1000).toString(16).toUpperCase().padStart(3, '0');
       
       document.getElementById('voice-id').textContent = voiceId;
-      document.getElementById('voice-pitch').textContent = (pitch >= 0 ? '+' : '') + pitch + '%';
-      document.getElementById('voice-warmth').textContent = warmth + '/100';
-      document.getElementById('voice-speed').textContent = speed.toFixed(2) + 'x';
+      document.getElementById('voice-warmth').textContent = Math.max(0, Math.min(100, warmthVar)) + '/100';
+      document.getElementById('voice-humanity').textContent = Math.max(0, Math.min(100, humanityVar)) + '/100';
+      document.getElementById('voice-formality').textContent = Math.max(0, Math.min(100, formalityVar)) + '/100';
+      document.getElementById('voice-era').textContent = arch.era;
     }
     
     function hashCode(str) {
@@ -1624,24 +1644,23 @@
     
     function regenerateVoice() {
       const name = document.getElementById('bot-name').value || 'Bot';
-      const newName = name + '_' + Date.now();
-      document.getElementById('bot-name').value = name; // keep original
-      // Use timestamp to get different hash
-      const hash = hashCode(newName + selectedGender);
+      const arch = archetypes[selectedArchetype];
+      // Use timestamp for variation
+      const hash = hashCode(name + selectedArchetype + Date.now());
       
-      const pitch = ((hash % 40) - 20);
-      const warmth = 40 + (Math.abs(hash >> 8) % 60);
-      const speed = 0.9 + ((Math.abs(hash >> 16) % 30) / 100);
+      const warmthVar = arch.warmth + ((hash % 30) - 15);
+      const humanityVar = arch.humanity + ((hash >> 4) % 30 - 15);
+      const formalityVar = arch.formality + ((hash >> 8) % 30 - 15);
       
-      const genderCode = {male: 'M', female: 'F', neutral: 'N', any: 'X'}[selectedGender];
       const voiceId = name.substring(0, 3).toUpperCase() + '-' + 
-                      Math.abs(hash % 1000).toString(16).toUpperCase().padStart(3, '0') + '-' + 
-                      genderCode + 'v2';
+                      arch.code + '-' + 
+                      Math.abs(hash % 1000).toString(16).toUpperCase().padStart(3, '0');
       
       document.getElementById('voice-id').textContent = voiceId;
-      document.getElementById('voice-pitch').textContent = (pitch >= 0 ? '+' : '') + pitch + '%';
-      document.getElementById('voice-warmth').textContent = warmth + '/100';
-      document.getElementById('voice-speed').textContent = speed.toFixed(2) + 'x';
+      document.getElementById('voice-warmth').textContent = Math.max(0, Math.min(100, warmthVar)) + '/100';
+      document.getElementById('voice-humanity').textContent = Math.max(0, Math.min(100, humanityVar)) + '/100';
+      document.getElementById('voice-formality').textContent = Math.max(0, Math.min(100, formalityVar)) + '/100';
+      document.getElementById('voice-era').textContent = arch.era;
     }
     
     function playVoiceSample() {
