@@ -810,6 +810,113 @@
       font-weight: 600;
       margin-bottom: 0.5rem;
     }
+    
+    /* Prompt Hint - Subtle customization input */
+    .prompt-hint {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0.75rem 0 1rem;
+      padding: 0.5rem 0.75rem;
+      background: rgba(139, 92, 246, 0.05);
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    
+    .prompt-hint:hover, .prompt-hint:focus-within {
+      border-color: var(--accent);
+      background: rgba(139, 92, 246, 0.1);
+    }
+    
+    .prompt-hint-icon {
+      font-size: 0.875rem;
+      opacity: 0.6;
+    }
+    
+    .prompt-hint-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 0.8rem;
+      padding: 0.25rem 0;
+    }
+    
+    .prompt-hint-input::placeholder {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    
+    .prompt-hint-input:focus {
+      outline: none;
+    }
+    
+    /* Finance Card */
+    .finance-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    
+    .finance-item {
+      padding: 0.75rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .finance-item .amount {
+      font-family: 'SF Mono', monospace;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    
+    .finance-item .label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+    
+    .card-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+    
+    .card-item .card-icon {
+      font-size: 1.5rem;
+    }
+    
+    .card-item .card-info {
+      flex: 1;
+    }
+    
+    .card-item .card-name {
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    
+    .card-item .card-number {
+      font-family: 'SF Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    
+    .card-item .card-status {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background: rgba(34, 197, 94, 0.2);
+      color: var(--success);
+    }
   </style>
 </head>
 <body>
@@ -876,6 +983,11 @@
       <div class="input-group">
         <label>SOUL.md — personality prompt</label>
         <textarea id="soul-editor">You are Axiom, a sharp and efficient AI assistant. You're direct, helpful, and slightly witty. You don't waste words but you're never cold. When you don't know something, you say so. You're here to get things done.</textarea>
+      </div>
+      
+      <div class="prompt-hint">
+        <span class="prompt-hint-icon">✨</span>
+        <input type="text" class="prompt-hint-input" placeholder="Add flavor: e.g., 'speaks like a pirate' or 'uses lots of emojis'..." id="soul-flavor">
       </div>
       
       <div class="sample-response">
@@ -1123,6 +1235,11 @@
         </div>
       </div>
       
+      <div class="prompt-hint">
+        <span class="prompt-hint-icon">🎯</span>
+        <input type="text" class="prompt-hint-input" placeholder="Custom skill request: e.g., 'connect to my smart home' or 'monitor crypto prices'..." id="skills-custom">
+      </div>
+      
       <div class="info-box">
         <div class="title">🔐 Encrypted Secrets</div>
         Sensitive data (API keys, passwords) will be sent via email, never visible to the model provider.
@@ -1233,9 +1350,9 @@
         </div>
       </div>
       
-      <div class="input-group">
-        <label>Style hint (optional)</label>
-        <input type="text" id="avatar-hint" placeholder="e.g., cyberpunk, minimal, friendly robot, abstract...">
+      <div class="prompt-hint" style="margin-bottom: 1rem;">
+        <span class="prompt-hint-icon">🎨</span>
+        <input type="text" class="prompt-hint-input" placeholder="Style hint: e.g., 'cyberpunk', 'minimal geometric', 'friendly robot'..." id="avatar-hint">
       </div>
       
       <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
@@ -1285,26 +1402,39 @@
       </h2>
       
       <div class="dashboard-grid">
-        <!-- Wallet Card -->
+        <!-- Finances Card -->
         <div class="dashboard-card">
-          <h3>🪙 Wallet</h3>
-          <div class="wallet-card">
-            <div class="wallet-balance">
-              <span class="amount">0.00</span>
-              <span class="currency">ETH</span>
+          <h3>💰 Finances</h3>
+          <div class="finance-grid">
+            <div class="finance-item">
+              <div class="amount">$0.00</div>
+              <div class="label">USDC Balance</div>
             </div>
-            <div class="wallet-address">0x7a3d...8f2e</div>
-            <div class="wallet-actions">
-              <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; flex: 1;">
-                📥 Deposit
-              </button>
-              <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; flex: 1;">
-                📤 Send
-              </button>
+            <div class="finance-item">
+              <div class="amount">0.00 ETH</div>
+              <div class="label">Gas Wallet</div>
             </div>
           </div>
-          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
-            Daily limit: $50 · Recoverable via email
+          
+          <div class="card-item">
+            <span class="card-icon">💳</span>
+            <div class="card-info">
+              <div class="card-name">Gnosis Pay</div>
+              <div class="card-number">•••• 4829</div>
+            </div>
+            <span class="card-status">Active</span>
+          </div>
+          
+          <div class="card-item" style="opacity: 0.5; border-style: dashed;">
+            <span class="card-icon">➕</span>
+            <div class="card-info">
+              <div class="card-name">Add Card</div>
+              <div class="card-number">USDT, Visa, Mastercard</div>
+            </div>
+          </div>
+          
+          <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.5rem;">
+            Daily limit: $50 · AA wallet · Email recovery
           </div>
         </div>
         

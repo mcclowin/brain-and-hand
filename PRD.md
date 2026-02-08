@@ -237,10 +237,11 @@ Every bot needs a consistent identity for interacting with external services:
 
 ---
 
-## 4.9 Bot Wallet
+## 4.9 Bot Finances
 
-Optional embedded wallet for bots that need financial agency:
+Comprehensive financial tooling for bots that need economic agency:
 
+### Wallet (AA-based)
 | Feature | Description |
 |---|---|
 | **Account Abstraction** | Smart contract wallet (ERC-4337) |
@@ -249,13 +250,21 @@ Optional embedded wallet for bots that need financial agency:
 | **Use Cases** | Tips, payments, on-chain actions, gas fees |
 | **Providers** | ZeroDev, Cometh, Privy (geo-dependent) |
 
-Wallet is **opt-in** — not required for basic bot functionality.
+### Spending Cards
+| Card Type | Provider | Use Case |
+|-----------|----------|----------|
+| **Gnosis Pay** | Gnosis | EU crypto debit card |
+| **Holyheld** | Various | USDT-backed virtual card |
+| **Custom** | User-linked | Connect existing card |
 
-Dashboard shows:
-- Balance (ETH, USDC, etc.)
+### Dashboard Shows
+- USDC / USDT balance
+- ETH gas wallet balance
+- Linked cards with masked numbers
 - Transaction history
-- Spending limits
-- Top-up QR code
+- Daily spending limits
+
+Finances is **opt-in** — not required for basic bot functionality.
 
 ---
 
@@ -411,6 +420,34 @@ Inspired by nosoul.space / Moltbook aesthetic:
 - **Bot speaks** — loading states, errors, and confirmations are written as if the bot is talking
   - "I'm connecting to Telegram..." / "I can't reach WhatsApp. Check the QR?" / "I'm live. Say something."
 - **No onboarding modals, no tooltips, no cookie banners** — the interface IS the onboarding
+
+### Theme System
+
+Themes are defined via CSS custom properties. Easy to swap entire color schemes.
+
+**Built-in themes:**
+| Theme | Vibe | Accent |
+|-------|------|--------|
+| `default` | Purple/Neon | #8b5cf6 |
+| `lunar` | Space/Moon | #58a6ff |
+| `ember` | Warm/Fire | #f97316 |
+| `forest` | Nature/Green | #4ade80 |
+
+**Implementation:** See `themes.css`
+
+```html
+<html data-theme="lunar">
+```
+
+### Prompt Hints (Subtle Customization)
+
+Small, non-invasive input fields that allow custom instructions:
+
+- **Soul flavor:** "speaks like a pirate", "uses lots of emojis"
+- **Skills custom:** "connect to my smart home", "monitor crypto prices"
+- **Avatar style:** "cyberpunk", "minimal geometric"
+
+Design: Dashed border, placeholder text, expands on focus. Blends into the page.
 
 ---
 
