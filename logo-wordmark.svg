@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 80" width="400" height="80">
+  <defs>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#8b5cf6"/>
+      <stop offset="50%" style="stop-color:#a855f7"/>
+      <stop offset="100%" style="stop-color:#ec4899"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Icon -->
+  <g transform="translate(5, 10) scale(0.6)">
+    <!-- Brain -->
+    <path d="M25 30 C35 25 45 30 48 40 C52 35 48 25 40 22 C45 18 38 12 30 15 C22 10 12 18 15 28 C10 32 12 42 20 45 C15 52 22 60 32 58 C28 65 38 72 48 68 L48 50" 
+          fill="none" stroke="url(#textGrad)" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="30" cy="35" r="3" fill="#8b5cf6"/>
+    <circle cx="38" cy="48" r="2.5" fill="#a78bfa"/>
+    
+    <!-- Hand -->
+    <g transform="translate(52, 25)">
+      <rect x="5" y="0" width="6" height="20" rx="2" fill="url(#textGrad)"/>
+      <rect x="14" y="-3" width="6" height="23" rx="2" fill="url(#textGrad)"/>
+      <rect x="23" y="0" width="6" height="20" rx="2" fill="url(#textGrad)"/>
+      <rect x="3" y="18" width="28" height="25" rx="4" fill="url(#textGrad)"/>
+      <rect x="-3" y="25" width="8" height="6" rx="2" fill="url(#textGrad)"/>
+    </g>
+  </g>
+  
+  <!-- Text -->
+  <text x="75" y="52" font-family="SF Mono, Fira Code, monospace" font-size="36" font-weight="700" fill="url(#textGrad)">
+    Brain and Hand
+  </text>
+  
+  <!-- Tagline -->
+  <text x="77" y="70" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12" fill="#71717a">
+    Spawn your AI bot
+  </text>
+</svg>
