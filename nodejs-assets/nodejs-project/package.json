@@ -2,5 +2,13 @@
   "name": "brain-and-hand-node",
   "version": "0.1.0",
   "main": "main.js",
-  "dependencies": {}
+  "dependencies": {
+    "openclaw": "latest"
+  },
+  "scripts": {
+    "postinstall": "echo 'OpenClaw installed for mobile'"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }

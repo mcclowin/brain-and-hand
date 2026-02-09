@@ -29,26 +29,29 @@ jobs:
 
       - name: Create React Native project
         run: |
-          npx --yes @react-native-community/cli init BrainAndHandApp --directory rn-app --skip-git-init --skip-install
+          npx --yes @react-native-community/cli@latest init BrainAndHandApp --directory rn-app --skip-git-init --skip-install --pm npm
 
-      - name: Install dependencies
+      - name: Install RN dependencies
         working-directory: rn-app
         run: npm install
-
-      # Phase 1: Skip nodejs-mobile, just build basic RN app
-      # - name: Install nodejs-mobile
-      #   working-directory: rn-app
-      #   run: npm install nodejs-mobile-react-native --save
 
       - name: Copy Brain & Hand UI
         run: cp mobile/App.tsx rn-app/App.tsx
 
+      # Note: nodejs-mobile adds ~50MB to APK and requires native setup
+      # Phase 1: Build without it to validate pipeline
+      # Phase 2: Add nodejs-mobile integration
+      
       - name: Build Android Debug APK
         working-directory: rn-app/android
         run: ./gradlew assembleDebug --no-daemon
+
+      - name: List build outputs
+        run: find rn-app/android -name "*.apk" -type f
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: brain-and-hand-v0.1.0
           path: rn-app/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: warn
