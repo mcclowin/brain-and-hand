@@ -34,6 +34,8 @@ function App(): React.JSX.Element {
   const [saved, setSaved] = useState<boolean>(hasPreconfig);
   const [running, setRunning] = useState<boolean>(false);
   const [nodeReady, setNodeReady] = useState<boolean>(false);
+  const [wizardMode, setWizardMode] = useState<boolean>(false);
+  const [wizardInput, setWizardInput] = useState<string>('');
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const scrollRef = useRef<ScrollView>(null);
 
@@ -86,6 +88,17 @@ function App(): React.JSX.Element {
             addLog(`Node: ${data.node}`, 'info');
             addLog(`Gateway: ${data.running ? 'RUNNING' : 'STOPPED'}`, data.running ? 'success' : 'info');
             addLog(`Home: ${data.openclawHome}`, 'info');
+            break;
+          case 'wizard_started':
+            setWizardMode(true);
+            addLog('─── OpenClaw Setup Wizard ───', 'system');
+            break;
+          case 'wizard_output':
+            addLog(data.text, data.isError ? 'error' : 'info');
+            break;
+          case 'wizard_exit':
+            setWizardMode(false);
+            addLog(`Wizard exited (code: ${data.code})`, data.code === 0 ? 'success' : 'error');
             break;
           case 'error':
             addLog(data.message, 'error');
@@ -166,12 +179,15 @@ function App(): React.JSX.Element {
   }
 
   function handleOnboard() {
-    if (!apiKey.trim()) {
-      addLog('Error: Enter API key first', 'error');
-      return;
-    }
-    addLog('Running openclaw onboard...', 'system');
-    sendCommand('onboard', { apiKey });
+    addLog('Starting OpenClaw setup wizard...', 'system');
+    sendCommand('onboard');
+  }
+
+  function handleWizardSubmit() {
+    if (!wizardInput.trim()) return;
+    addLog(`> ${wizardInput}`, 'system');
+    sendCommand('wizard_input', { text: wizardInput });
+    setWizardInput('');
   }
 
   function getLogColor(type: LogEntry['type']): string {
@@ -272,10 +288,29 @@ function App(): React.JSX.Element {
         </ScrollView>
       </View>
 
+      {/* Wizard Input (shown when wizard is running) */}
+      {wizardMode && (
+        <View style={styles.wizardInput}>
+          <TextInput
+            style={styles.wizardTextInput}
+            placeholder="Type your answer..."
+            placeholderTextColor="#555"
+            value={wizardInput}
+            onChangeText={setWizardInput}
+            onSubmitEditing={handleWizardSubmit}
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+          <TouchableOpacity style={styles.wizardSendBtn} onPress={handleWizardSubmit}>
+            <Text style={styles.wizardSendText}>Send</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       {/* Footer */}
       <View style={styles.footer}>
         <Text style={styles.footerText}>
-          {nodejs ? (nodeReady ? '🟢 Node.js Ready' : '🟡 Loading...') : '🔴 UI Only'}
+          {wizardMode ? '🟣 Wizard Running' : nodejs ? (nodeReady ? '🟢 Node.js Ready' : '🟡 Loading...') : '🔴 UI Only'}
         </Text>
       </View>
     </SafeAreaView>
@@ -421,9 +456,39 @@ const styles = StyleSheet.create({
     color: '#8b5cf6',
     fontFamily: 'monospace',
   },
+  wizardInput: {
+    flexDirection: 'row',
+    padding: 12,
+    gap: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#7c3aed',
+    backgroundColor: '#1a1a2e',
+  },
+  wizardTextInput: {
+    flex: 1,
+    backgroundColor: '#111',
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    color: '#fff',
+    fontFamily: 'monospace',
+    fontSize: 14,
+    borderWidth: 1,
+    borderColor: '#7c3aed',
+  },
+  wizardSendBtn: {
+    backgroundColor: '#7c3aed',
+    borderRadius: 8,
+    paddingHorizontal: 20,
+    justifyContent: 'center',
+  },
+  wizardSendText: {
+    color: '#fff',
+    fontWeight: '600',
+  },
   footer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     padding: 12,
     borderTopWidth: 1,
     borderTopColor: '#222',

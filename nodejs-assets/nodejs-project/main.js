@@ -160,29 +160,86 @@ function stopGateway() {
   }, 5000);
 }
 
-// Run onboard (non-interactive with API key)
-function runOnboard(apiKey) {
-  if (!apiKey) {
-    log('Error: API key required for onboard', 'error');
+// Interactive process (for onboard wizard)
+let interactiveProcess = null;
+
+// Run onboard wizard (interactive)
+function runOnboard() {
+  if (interactiveProcess) {
+    log('Wizard already running', 'error');
     return;
   }
   
-  log('Running OpenClaw onboard (non-interactive)...', 'system');
+  log('Starting OpenClaw setup wizard...', 'system');
+  log('Follow the prompts below.', 'info');
   
-  const args = [
-    'onboard',
-    '--non-interactive',
-    '--accept-risk',
-    '--anthropic-api-key', apiKey,
-    '--mode', 'local',
-  ];
+  const env = {
+    ...process.env,
+    HOME: DATA_DIR,
+    OPENCLAW_HOME: OPENCLAW_HOME,
+    NODE_ENV: 'production',
+    FORCE_COLOR: '0', // Disable colors for cleaner output
+  };
   
-  runOpenClaw(args, null, (code) => {
-    if (code === 0) {
-      log('OpenClaw configured successfully!', 'success');
+  try {
+    const openclawBin = path.join(__dirname, 'node_modules', '.bin', 'openclaw');
+    const openclawMjs = path.join(__dirname, 'node_modules', 'openclaw', 'openclaw.mjs');
+    
+    let cmd, cmdArgs;
+    if (fs.existsSync(openclawBin)) {
+      cmd = openclawBin;
+      cmdArgs = ['onboard'];
+    } else if (fs.existsSync(openclawMjs)) {
+      cmd = process.execPath;
+      cmdArgs = [openclawMjs, 'onboard'];
+    } else {
+      cmd = 'openclaw';
+      cmdArgs = ['onboard'];
     }
-    send({ type: 'onboard_complete', code });
-  });
+    
+    interactiveProcess = spawn(cmd, cmdArgs, {
+      env,
+      cwd: OPENCLAW_HOME,
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+    
+    interactiveProcess.stdout.on('data', (data) => {
+      const text = data.toString();
+      // Send each line
+      text.split('\n').forEach(line => {
+        if (line.trim()) {
+          send({ type: 'wizard_output', text: line });
+        }
+      });
+    });
+    
+    interactiveProcess.stderr.on('data', (data) => {
+      const text = data.toString().trim();
+      if (text) {
+        send({ type: 'wizard_output', text: text, isError: true });
+      }
+    });
+    
+    interactiveProcess.on('exit', (code) => {
+      log(`Setup wizard exited (code: ${code})`, code === 0 ? 'success' : 'error');
+      interactiveProcess = null;
+      send({ type: 'wizard_exit', code });
+    });
+    
+    send({ type: 'wizard_started' });
+    
+  } catch (err) {
+    log(`Failed to start wizard: ${err.message}`, 'error');
+  }
+}
+
+// Send input to interactive wizard
+function sendWizardInput(text) {
+  if (!interactiveProcess) {
+    log('No wizard running', 'error');
+    return;
+  }
+  interactiveProcess.stdin.write(text + '\n');
 }
 
 // Handle messages from React Native
@@ -220,7 +277,11 @@ bridge.channel.on('message', (msg) => {
       break;
 
     case 'onboard':
-      runOnboard(data.apiKey);
+      runOnboard();
+      break;
+
+    case 'wizard_input':
+      sendWizardInput(data.text);
       break;
 
     case 'doctor':
