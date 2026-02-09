@@ -4,202 +4,164 @@
  */
 
 const bridge = require('rn-bridge');
+const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
-const os = require('os');
 
 // State
-let gateway = null;
-let config = null;
+let gatewayProcess = null;
+let logs = [];
 
-// Paths - nodejs-mobile provides a documents directory
+// Data directory from React Native
 const DATA_DIR = bridge.app.datadir();
 const OPENCLAW_HOME = path.join(DATA_DIR, '.openclaw');
-const CONFIG_PATH = path.join(OPENCLAW_HOME, 'openclaw.json');
-const WORKSPACE_DIR = path.join(OPENCLAW_HOME, 'workspace');
 
-// Ensure directories exist
+// Ensure directories
 function ensureDirs() {
-  [OPENCLAW_HOME, WORKSPACE_DIR].forEach(dir => {
+  [OPENCLAW_HOME, path.join(OPENCLAW_HOME, 'workspace')].forEach(dir => {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
   });
 }
 
-// Send message to React Native
+// Send to React Native
 function send(data) {
   bridge.channel.send(JSON.stringify(data));
 }
 
-function log(msg) {
-  console.log(`[Node] ${msg}`);
-  send({ type: 'log', message: msg });
+function log(text, type = 'info') {
+  const entry = { time: new Date().toISOString(), text, type };
+  logs.push(entry);
+  send({ type: 'log', ...entry });
 }
 
-function error(msg) {
-  console.error(`[Node] ${msg}`);
-  send({ type: 'error', message: msg });
-}
-
-// Generate minimal OpenClaw config
-function generateConfig(apiKey, provider = 'anthropic') {
-  return {
-    meta: {
-      lastTouchedVersion: '2026.2.0',
-      lastTouchedAt: new Date().toISOString(),
-    },
-    auth: {
-      profiles: {
-        [`${provider}:default`]: {
-          provider: provider,
-          mode: 'token',
-        },
-      },
-    },
-    agents: {
-      defaults: {
-        workspace: WORKSPACE_DIR,
-      },
-    },
-    gateway: {
-      port: 18789,
-      mode: 'local',
-      bind: 'loopback',
-    },
+// Run OpenClaw command
+function runOpenClaw(args, onData, onExit) {
+  log(`Running: openclaw ${args.join(' ')}`, 'system');
+  
+  // Set environment
+  const env = {
+    ...process.env,
+    HOME: DATA_DIR,
+    OPENCLAW_HOME: OPENCLAW_HOME,
+    NODE_ENV: 'production',
   };
-}
-
-// Write config to disk
-function saveConfig(cfg) {
-  ensureDirs();
-  fs.writeFileSync(CONFIG_PATH, JSON.stringify(cfg, null, 2));
-  // Store API key in environment (OpenClaw reads from env)
-  if (cfg._apiKey) {
-    process.env.ANTHROPIC_API_KEY = cfg._apiKey;
-    process.env.OPENAI_API_KEY = cfg._apiKey;
-    delete cfg._apiKey;
-  }
-  log(`Config saved to ${CONFIG_PATH}`);
-}
-
-// Load existing config
-function loadConfig() {
+  
   try {
-    if (fs.existsSync(CONFIG_PATH)) {
-      return JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf-8'));
+    // Try to find openclaw in node_modules
+    const openclawBin = path.join(__dirname, 'node_modules', '.bin', 'openclaw');
+    const openclawMjs = path.join(__dirname, 'node_modules', 'openclaw', 'openclaw.mjs');
+    
+    let cmd, cmdArgs;
+    
+    if (fs.existsSync(openclawBin)) {
+      cmd = openclawBin;
+      cmdArgs = args;
+    } else if (fs.existsSync(openclawMjs)) {
+      cmd = process.execPath;
+      cmdArgs = [openclawMjs, ...args];
+    } else {
+      log('OpenClaw not found in node_modules', 'error');
+      log('Trying global openclaw...', 'info');
+      cmd = 'openclaw';
+      cmdArgs = args;
     }
-  } catch (e) {
-    log(`No existing config: ${e.message}`);
-  }
-  return null;
-}
-
-// Start OpenClaw gateway
-async function startGateway() {
-  if (gateway) {
-    log('Gateway already running');
-    send({ type: 'started', already: true });
-    return;
-  }
-
-  if (!config) {
-    error('Not configured');
-    return;
-  }
-
-  try {
-    log('Starting OpenClaw gateway...');
     
-    // Set environment for OpenClaw
-    process.env.OPENCLAW_HOME = OPENCLAW_HOME;
-    process.env.HOME = DATA_DIR;
-    
-    // Try to load and start OpenClaw
-    // Option 1: Direct import (if openclaw is bundled)
-    try {
-      const openclaw = require('openclaw');
-      if (openclaw.startGateway) {
-        gateway = await openclaw.startGateway({ port: 18789 });
-        log('Gateway started via openclaw module');
-        send({ type: 'started', port: 18789 });
-        return;
-      }
-    } catch (e) {
-      log(`Direct import failed: ${e.message}`);
-    }
-
-    // Option 2: Start a simple HTTP server as placeholder
-    // (Real OpenClaw integration needs the npm package bundled)
-    const http = require('http');
-    
-    gateway = http.createServer((req, res) => {
-      if (req.url === '/health') {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ status: 'ok', engine: 'brain-and-hand' }));
-        return;
-      }
-      
-      if (req.url === '/chat' && req.method === 'POST') {
-        let body = '';
-        req.on('data', chunk => body += chunk);
-        req.on('end', async () => {
-          try {
-            const { message } = JSON.parse(body);
-            // TODO: Call actual LLM here
-            const response = { reply: `Echo: ${message}` };
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(response));
-          } catch (e) {
-            res.writeHead(400);
-            res.end(JSON.stringify({ error: e.message }));
-          }
-        });
-        return;
-      }
-      
-      res.writeHead(404);
-      res.end('Not found');
+    const proc = spawn(cmd, cmdArgs, {
+      env,
+      cwd: OPENCLAW_HOME,
+      stdio: ['pipe', 'pipe', 'pipe'],
     });
     
-    gateway.listen(18789, '127.0.0.1', () => {
-      log('Gateway started on port 18789 (placeholder mode)');
-      send({ type: 'started', port: 18789, mode: 'placeholder' });
+    proc.stdout.on('data', (data) => {
+      const text = data.toString().trim();
+      if (text) {
+        log(text, 'info');
+        if (onData) onData(text);
+      }
     });
     
-  } catch (e) {
-    error(`Failed to start gateway: ${e.message}`);
-    send({ type: 'error', message: e.message });
+    proc.stderr.on('data', (data) => {
+      const text = data.toString().trim();
+      if (text) {
+        log(text, 'error');
+      }
+    });
+    
+    proc.on('error', (err) => {
+      log(`Process error: ${err.message}`, 'error');
+    });
+    
+    proc.on('exit', (code) => {
+      log(`Process exited with code ${code}`, code === 0 ? 'success' : 'error');
+      if (onExit) onExit(code);
+    });
+    
+    return proc;
+    
+  } catch (err) {
+    log(`Failed to spawn: ${err.message}`, 'error');
+    return null;
+  }
+}
+
+// Start gateway
+function startGateway(apiKey) {
+  if (gatewayProcess) {
+    log('Gateway already running', 'error');
+    return;
+  }
+  
+  // Write config if API key provided
+  if (apiKey) {
+    process.env.ANTHROPIC_API_KEY = apiKey;
+  }
+  
+  log('Starting OpenClaw gateway...', 'system');
+  
+  gatewayProcess = runOpenClaw(['gateway', '--verbose'], null, (code) => {
+    gatewayProcess = null;
+    send({ type: 'gateway_stopped', code });
+  });
+  
+  if (gatewayProcess) {
+    send({ type: 'gateway_started' });
   }
 }
 
 // Stop gateway
-async function stopGateway() {
-  if (!gateway) {
-    log('Gateway not running');
-    send({ type: 'stopped', already: true });
+function stopGateway() {
+  if (!gatewayProcess) {
+    log('Gateway not running', 'info');
     return;
   }
-
-  try {
-    gateway.close();
-    gateway = null;
-    log('Gateway stopped');
-    send({ type: 'stopped' });
-  } catch (e) {
-    error(`Failed to stop: ${e.message}`);
-  }
+  
+  log('Stopping gateway...', 'system');
+  gatewayProcess.kill('SIGTERM');
+  
+  setTimeout(() => {
+    if (gatewayProcess) {
+      gatewayProcess.kill('SIGKILL');
+    }
+  }, 5000);
 }
 
-// Handle commands from React Native
-bridge.channel.on('message', async (msg) => {
-  log(`Received: ${msg}`);
-  
+// Run onboard wizard
+function runOnboard() {
+  log('Starting OpenClaw onboard wizard...', 'system');
+  runOpenClaw(['onboard'], null, (code) => {
+    send({ type: 'onboard_complete', code });
+  });
+}
+
+// Handle messages from React Native
+bridge.channel.on('message', (msg) => {
   let data;
   try {
     data = JSON.parse(msg);
   } catch (e) {
-    error(`Parse error: ${e.message}`);
+    log(`Parse error: ${e.message}`, 'error');
     return;
   }
 
@@ -207,71 +169,55 @@ bridge.channel.on('message', async (msg) => {
 
   switch (cmd) {
     case 'ping':
-      send({ type: 'pong', node: process.version, platform: process.platform });
+      send({ type: 'pong', node: process.version });
       break;
 
     case 'status':
       send({
         type: 'status',
-        running: gateway !== null,
-        configured: config !== null,
+        running: gatewayProcess !== null,
         node: process.version,
-        dataDir: DATA_DIR,
         openclawHome: OPENCLAW_HOME,
       });
       break;
 
-    case 'configure':
-      try {
-        config = generateConfig(data.apiKey, data.provider || 'anthropic');
-        config._apiKey = data.apiKey; // Temporarily store for env var
-        saveConfig(config);
-        send({ type: 'configured', provider: data.provider || 'anthropic' });
-      } catch (e) {
-        error(`Configure failed: ${e.message}`);
-      }
-      break;
-
     case 'start':
-      await startGateway();
+      startGateway(data.apiKey);
       break;
 
     case 'stop':
-      await stopGateway();
+      stopGateway();
       break;
 
-    case 'chat':
-      // Direct chat (bypass gateway)
-      if (!config) {
-        send({ type: 'chat_response', error: 'Not configured' });
-        return;
-      }
-      // TODO: Implement direct LLM call
-      send({ type: 'chat_response', message: `Echo: ${data.text}` });
+    case 'onboard':
+      runOnboard();
       break;
 
-    case 'getConfig':
-      send({ type: 'config', config: loadConfig(), path: CONFIG_PATH });
+    case 'doctor':
+      runOpenClaw(['doctor']);
+      break;
+
+    case 'version':
+      runOpenClaw(['--version']);
       break;
 
     default:
-      error(`Unknown command: ${cmd}`);
+      log(`Unknown command: ${cmd}`, 'error');
   }
 });
 
 // Startup
 ensureDirs();
-config = loadConfig();
+log('Node.js runtime initialized', 'system');
+log(`Version: ${process.version}`, 'info');
+log(`Data dir: ${DATA_DIR}`, 'info');
 
-log('Node.js runtime initialized');
-log(`Version: ${process.version}`);
-log(`Platform: ${process.platform}`);
-log(`Data dir: ${DATA_DIR}`);
-log(`OpenClaw home: ${OPENCLAW_HOME}`);
+// Check if openclaw is available
+const openclawPath = path.join(__dirname, 'node_modules', 'openclaw');
+if (fs.existsSync(openclawPath)) {
+  log('OpenClaw package found ✓', 'success');
+} else {
+  log('OpenClaw package not found (will try global)', 'error');
+}
 
-send({ 
-  type: 'ready', 
-  node: process.version,
-  configured: config !== null,
-  dataDir: DATA_DIR,
-});
+send({ type: 'ready', node: process.version });

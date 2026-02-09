@@ -8,7 +8,19 @@ import {
   TextInput,
   ScrollView,
   StatusBar,
+  Platform,
 } from 'react-native';
+
+// nodejs-mobile bridge (will be undefined if not available)
+let nodejs: any = null;
+try {
+  nodejs = require('nodejs-mobile-react-native');
+} catch (e) {
+  console.log('nodejs-mobile not available');
+}
+
+// Pre-configured API key (set via GitHub Secrets or local config)
+const PRECONFIGURED_KEY = '%%ANTHROPIC_API_KEY%%';
 
 type LogEntry = {
   time: string;
@@ -16,18 +28,13 @@ type LogEntry = {
   type: 'info' | 'error' | 'success' | 'system';
 };
 
-// Pre-configured API key (set via GitHub Secrets or local config)
-const PRECONFIGURED_KEY = '%%ANTHROPIC_API_KEY%%'; // Replaced at build time
-
 function App(): React.JSX.Element {
   const hasPreconfig = PRECONFIGURED_KEY && !PRECONFIGURED_KEY.includes('%%');
   const [apiKey, setApiKey] = useState<string>(hasPreconfig ? PRECONFIGURED_KEY : '');
   const [saved, setSaved] = useState<boolean>(hasPreconfig);
   const [running, setRunning] = useState<boolean>(false);
-  const [logs, setLogs] = useState<LogEntry[]>([
-    {time: getTime(), text: 'Brain & Hand v0.1.0', type: 'system'},
-    {time: getTime(), text: hasPreconfig ? 'API key pre-configured ✓' : 'Enter API key to continue', type: hasPreconfig ? 'success' : 'info'},
-  ]);
+  const [nodeReady, setNodeReady] = useState<boolean>(false);
+  const [logs, setLogs] = useState<LogEntry[]>([]);
   const scrollRef = useRef<ScrollView>(null);
 
   function getTime(): string {
@@ -35,8 +42,78 @@ function App(): React.JSX.Element {
   }
 
   function addLog(text: string, type: LogEntry['type'] = 'info') {
-    setLogs(prev => [...prev.slice(-100), {time: getTime(), text, type}]);
+    setLogs(prev => [...prev.slice(-200), {time: getTime(), text, type}]);
     setTimeout(() => scrollRef.current?.scrollToEnd({animated: true}), 100);
+  }
+
+  useEffect(() => {
+    addLog('Brain & Hand v0.1.0', 'system');
+    
+    if (!nodejs) {
+      addLog('nodejs-mobile not available', 'error');
+      addLog('Running in UI-only mode', 'info');
+      return;
+    }
+
+    addLog('Initializing Node.js runtime...', 'info');
+
+    // Listen for messages from Node.js
+    nodejs.channel.addListener('message', (msg: string) => {
+      try {
+        const data = JSON.parse(msg);
+        
+        switch (data.type) {
+          case 'ready':
+            setNodeReady(true);
+            addLog(`Node.js ${data.node} ready ✓`, 'success');
+            break;
+          case 'pong':
+            addLog(`Pong: Node.js ${data.node}`, 'success');
+            break;
+          case 'log':
+            addLog(data.text, data.type || 'info');
+            break;
+          case 'gateway_started':
+            setRunning(true);
+            addLog('Gateway started ✓', 'success');
+            break;
+          case 'gateway_stopped':
+            setRunning(false);
+            addLog(`Gateway stopped (code: ${data.code})`, 'info');
+            break;
+          case 'status':
+            addLog(`─── Status ───`, 'system');
+            addLog(`Node: ${data.node}`, 'info');
+            addLog(`Gateway: ${data.running ? 'RUNNING' : 'STOPPED'}`, data.running ? 'success' : 'info');
+            addLog(`Home: ${data.openclawHome}`, 'info');
+            break;
+          case 'error':
+            addLog(data.message, 'error');
+            break;
+          default:
+            addLog(JSON.stringify(data), 'info');
+        }
+      } catch (e) {
+        addLog(msg, 'info');
+      }
+    });
+
+    // Start Node.js
+    nodejs.start('main.js');
+
+    return () => {
+      if (nodejs) {
+        nodejs.channel.removeAllListeners('message');
+      }
+    };
+  }, []);
+
+  function sendCommand(cmd: string, payload: any = {}) {
+    if (!nodejs) {
+      addLog('Node.js not available', 'error');
+      return;
+    }
+    nodejs.channel.send(JSON.stringify({ cmd, ...payload }));
   }
 
   function handleSave() {
@@ -45,38 +122,47 @@ function App(): React.JSX.Element {
       return;
     }
     setSaved(true);
-    addLog(`API key saved (${apiKey.slice(0, 8)}...)`, 'success');
-    addLog('Ready to start gateway', 'info');
+    addLog(`API key saved (${apiKey.slice(0, 12)}...)`, 'success');
   }
 
   function handleStart() {
-    if (!saved) {
+    if (!saved && !hasPreconfig) {
       addLog('Error: Configure API key first', 'error');
       return;
     }
-    setRunning(true);
     addLog('Starting OpenClaw gateway...', 'system');
+    sendCommand('start', { apiKey });
     
-    // Simulate startup sequence (will be real with nodejs-mobile)
-    setTimeout(() => addLog('Initializing Node.js runtime...', 'info'), 300);
-    setTimeout(() => addLog('Loading configuration...', 'info'), 600);
-    setTimeout(() => addLog('Gateway binding to 127.0.0.1:18789', 'info'), 900);
-    setTimeout(() => addLog('OpenClaw gateway started ✓', 'success'), 1200);
-    setTimeout(() => addLog('Waiting for messages...', 'info'), 1500);
+    // Fallback for UI-only mode
+    if (!nodejs) {
+      setRunning(true);
+      setTimeout(() => addLog('(Simulated) Gateway started', 'success'), 500);
+    }
   }
 
   function handleStop() {
-    setRunning(false);
     addLog('Stopping gateway...', 'system');
-    setTimeout(() => addLog('Gateway stopped', 'info'), 300);
+    sendCommand('stop');
+    
+    if (!nodejs) {
+      setRunning(false);
+      setTimeout(() => addLog('(Simulated) Gateway stopped', 'info'), 300);
+    }
   }
 
   function handleStatus() {
-    addLog('─── Status ───', 'system');
-    addLog(`Gateway: ${running ? 'RUNNING' : 'STOPPED'}`, running ? 'success' : 'info');
-    addLog(`API Key: ${saved ? 'configured' : 'not set'}`, saved ? 'success' : 'error');
-    addLog(`Platform: Android (nodejs-mobile)`, 'info');
-    addLog('──────────────', 'system');
+    sendCommand('status');
+    
+    if (!nodejs) {
+      addLog('─── Status ───', 'system');
+      addLog(`Gateway: ${running ? 'RUNNING' : 'STOPPED'}`, running ? 'success' : 'info');
+      addLog(`Mode: UI-only (no Node.js)`, 'error');
+    }
+  }
+
+  function handleDoctor() {
+    addLog('Running openclaw doctor...', 'system');
+    sendCommand('doctor');
   }
 
   function getLogColor(type: LogEntry['type']): string {
@@ -96,7 +182,9 @@ function App(): React.JSX.Element {
       <View style={styles.header}>
         <Text style={styles.title}>🧠 Brain & Hand</Text>
         <View style={[styles.statusBadge, running && styles.statusRunning]}>
-          <Text style={styles.statusText}>{running ? '● RUNNING' : '○ STOPPED'}</Text>
+          <Text style={styles.statusText}>
+            {running ? '● RUNNING' : '○ STOPPED'}
+          </Text>
         </View>
       </View>
 
@@ -147,7 +235,9 @@ function App(): React.JSX.Element {
 
       {/* Log Viewer */}
       <View style={styles.logContainer}>
-        <Text style={styles.logHeader}>─── OpenClaw Logs ───</Text>
+        <Text style={styles.logHeader}>
+          ─── OpenClaw Logs ─── {nodeReady ? '🟢' : nodejs ? '🟡' : '🔴'}
+        </Text>
         <ScrollView 
           ref={scrollRef}
           style={styles.logScroll}
@@ -164,7 +254,12 @@ function App(): React.JSX.Element {
 
       {/* Footer */}
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Phase 1: UI Only • nodejs-mobile coming soon</Text>
+        <TouchableOpacity onPress={handleDoctor}>
+          <Text style={styles.footerLink}>Run Doctor</Text>
+        </TouchableOpacity>
+        <Text style={styles.footerText}>
+          {nodejs ? (nodeReady ? 'Node.js Ready' : 'Node.js Loading...') : 'UI Only Mode'}
+        </Text>
       </View>
     </SafeAreaView>
   );
@@ -307,13 +402,18 @@ const styles = StyleSheet.create({
     fontFamily: 'monospace',
   },
   footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     padding: 12,
-    alignItems: 'center',
     borderTopWidth: 1,
     borderTopColor: '#222',
   },
   footerText: {
     color: '#444',
+    fontSize: 12,
+  },
+  footerLink: {
+    color: '#8b5cf6',
     fontSize: 12,
   },
 });

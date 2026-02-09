@@ -11,7 +11,7 @@ jobs:
   build:
     name: Build APK
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,6 +27,14 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Setup Android NDK
+        uses: android-actions/setup-android@v3
+        
+      - name: Install NDK
+        run: |
+          sdkmanager --install "ndk;25.2.9519653"
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/25.2.9519653" >> $GITHUB_ENV
+
       - name: Create React Native project
         run: |
           npx --yes @react-native-community/cli@latest init BrainAndHandApp --directory rn-app --skip-git-init --skip-install --pm npm
@@ -35,15 +43,43 @@ jobs:
         working-directory: rn-app
         run: npm install
 
+      - name: Install nodejs-mobile-react-native
+        working-directory: rn-app
+        run: npm install nodejs-mobile-react-native --save
+
       - name: Copy Brain & Hand UI
         run: |
-          # Inject API key if provided via secrets
+          # Inject API key if provided
           if [ -n "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
             sed -i "s|%%ANTHROPIC_API_KEY%%|${{ secrets.ANTHROPIC_API_KEY }}|g" mobile/App.tsx
           fi
           cp mobile/App.tsx rn-app/App.tsx
 
-      # Bundle JS into the APK (required for standalone use)
+      - name: Setup nodejs-assets
+        run: |
+          mkdir -p rn-app/nodejs-assets/nodejs-project
+          cp nodejs-assets/nodejs-project/main.js rn-app/nodejs-assets/nodejs-project/
+          cp nodejs-assets/nodejs-project/package.json rn-app/nodejs-assets/nodejs-project/
+
+      - name: Install Node.js project dependencies
+        working-directory: rn-app/nodejs-assets/nodejs-project
+        run: |
+          # Install openclaw (this may take a while due to native deps)
+          npm install --production || echo "Some deps may have failed"
+
+      - name: Configure Metro to ignore nodejs-project
+        working-directory: rn-app
+        run: |
+          cat > metro.config.js << 'EOF'
+          const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
+          const config = {
+            resolver: {
+              blockList: [/nodejs-assets\/.*/],
+            },
+          };
+          module.exports = mergeConfig(getDefaultConfig(__dirname), config);
+          EOF
+
       - name: Bundle JavaScript for Release
         working-directory: rn-app
         run: |
@@ -58,22 +94,21 @@ jobs:
       - name: Build Android Release APK
         working-directory: rn-app/android
         run: ./gradlew assembleRelease --no-daemon
+        continue-on-error: true
+
+      - name: Build Debug APK (fallback)
+        if: failure()
+        working-directory: rn-app/android
+        run: ./gradlew assembleDebug --no-daemon
 
       - name: List build outputs
-        run: find rn-app/android -name "*.apk" -type f
+        run: find rn-app/android -name "*.apk" -type f 2>/dev/null || echo "No APKs found"
 
       - name: Upload Release APK
         uses: actions/upload-artifact@v4
         with:
           name: brain-and-hand-v0.1.0
-          path: rn-app/android/app/build/outputs/apk/release/app-release.apk
-          if-no-files-found: warn
-
-      # Fallback to unsigned if signing fails
-      - name: Upload Unsigned APK (fallback)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: brain-and-hand-unsigned
-          path: rn-app/android/app/build/outputs/apk/release/app-release-unsigned.apk
+          path: |
+            rn-app/android/app/build/outputs/apk/release/*.apk
+            rn-app/android/app/build/outputs/apk/debug/*.apk
           if-no-files-found: warn

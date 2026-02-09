@@ -3,12 +3,9 @@
   "version": "0.1.0",
   "main": "main.js",
   "dependencies": {
-    "openclaw": "latest"
+    "openclaw": "^2026.2.6"
   },
   "scripts": {
-    "postinstall": "echo 'OpenClaw installed for mobile'"
-  },
-  "engines": {
-    "node": ">=18"
+    "postinstall": "echo 'OpenClaw installed'"
   }
 }
