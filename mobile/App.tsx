@@ -16,13 +16,17 @@ type LogEntry = {
   type: 'info' | 'error' | 'success' | 'system';
 };
 
+// Pre-configured API key (set via GitHub Secrets or local config)
+const PRECONFIGURED_KEY = '%%ANTHROPIC_API_KEY%%'; // Replaced at build time
+
 function App(): React.JSX.Element {
-  const [apiKey, setApiKey] = useState<string>('');
-  const [saved, setSaved] = useState<boolean>(false);
+  const hasPreconfig = PRECONFIGURED_KEY && !PRECONFIGURED_KEY.includes('%%');
+  const [apiKey, setApiKey] = useState<string>(hasPreconfig ? PRECONFIGURED_KEY : '');
+  const [saved, setSaved] = useState<boolean>(hasPreconfig);
   const [running, setRunning] = useState<boolean>(false);
   const [logs, setLogs] = useState<LogEntry[]>([
     {time: getTime(), text: 'Brain & Hand v0.1.0', type: 'system'},
-    {time: getTime(), text: 'Waiting for configuration...', type: 'info'},
+    {time: getTime(), text: hasPreconfig ? 'API key pre-configured ✓' : 'Enter API key to continue', type: hasPreconfig ? 'success' : 'info'},
   ]);
   const scrollRef = useRef<ScrollView>(null);
 

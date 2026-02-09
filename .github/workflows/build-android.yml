@@ -36,7 +36,12 @@ jobs:
         run: npm install
 
       - name: Copy Brain & Hand UI
-        run: cp mobile/App.tsx rn-app/App.tsx
+        run: |
+          # Inject API key if provided via secrets
+          if [ -n "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
+            sed -i "s|%%ANTHROPIC_API_KEY%%|${{ secrets.ANTHROPIC_API_KEY }}|g" mobile/App.tsx
+          fi
+          cp mobile/App.tsx rn-app/App.tsx
 
       # Bundle JS into the APK (required for standalone use)
       - name: Bundle JavaScript for Release
