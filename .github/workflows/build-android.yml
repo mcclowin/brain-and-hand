@@ -11,7 +11,7 @@ jobs:
   build:
     name: Build APK
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -63,7 +63,7 @@ jobs:
           name: brain-and-hand-v0.1.0
           path: rn-app/android/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: warn
-          
+
       # Fallback to unsigned if signing fails
       - name: Upload Unsigned APK (fallback)
         if: always()
