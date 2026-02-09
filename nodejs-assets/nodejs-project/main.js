@@ -3,7 +3,20 @@
  * Runs OpenClaw inside nodejs-mobile on Android
  */
 
-const bridge = require('rn-bridge');
+// Support both nodejs-mobile and local testing
+let bridge;
+try {
+  bridge = require('rn-bridge');
+} catch (e) {
+  // Local testing mode - use mock bridge
+  bridge = global.bridge || {
+    app: { datadir: () => process.env.HOME || '/tmp' },
+    channel: {
+      on: () => {},
+      send: (msg) => console.log('[Bridge]', msg),
+    }
+  };
+}
 const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
