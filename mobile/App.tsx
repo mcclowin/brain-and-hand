@@ -165,6 +165,15 @@ function App(): React.JSX.Element {
     sendCommand('doctor');
   }
 
+  function handleOnboard() {
+    if (!apiKey.trim()) {
+      addLog('Error: Enter API key first', 'error');
+      return;
+    }
+    addLog('Running openclaw onboard...', 'system');
+    sendCommand('onboard', { apiKey });
+  }
+
   function getLogColor(type: LogEntry['type']): string {
     switch (type) {
       case 'error': return '#ef4444';
@@ -215,6 +224,12 @@ function App(): React.JSX.Element {
       {/* Controls */}
       <View style={styles.controls}>
         <TouchableOpacity 
+          style={[styles.btn, styles.onboardBtn]} 
+          onPress={handleOnboard}
+        >
+          <Text style={styles.btnText}>⚙ Setup</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
           style={[styles.btn, styles.startBtn, running && styles.btnDisabled]} 
           onPress={handleStart}
           disabled={running}
@@ -228,8 +243,13 @@ function App(): React.JSX.Element {
         >
           <Text style={styles.btnText}>⏹ Stop</Text>
         </TouchableOpacity>
+      </View>
+      <View style={styles.controls}>
         <TouchableOpacity style={[styles.btn, styles.statusBtn]} onPress={handleStatus}>
           <Text style={styles.btnText}>Status</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.btn, styles.statusBtn]} onPress={handleDoctor}>
+          <Text style={styles.btnText}>Doctor</Text>
         </TouchableOpacity>
       </View>
 
@@ -254,11 +274,8 @@ function App(): React.JSX.Element {
 
       {/* Footer */}
       <View style={styles.footer}>
-        <TouchableOpacity onPress={handleDoctor}>
-          <Text style={styles.footerLink}>Run Doctor</Text>
-        </TouchableOpacity>
         <Text style={styles.footerText}>
-          {nodejs ? (nodeReady ? 'Node.js Ready' : 'Node.js Loading...') : 'UI Only Mode'}
+          {nodejs ? (nodeReady ? '🟢 Node.js Ready' : '🟡 Loading...') : '🔴 UI Only'}
         </Text>
       </View>
     </SafeAreaView>
@@ -348,6 +365,9 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: 'center',
+  },
+  onboardBtn: {
+    backgroundColor: '#7c3aed',
   },
   startBtn: {
     backgroundColor: '#166534',

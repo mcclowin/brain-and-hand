@@ -160,10 +160,27 @@ function stopGateway() {
   }, 5000);
 }
 
-// Run onboard wizard
-function runOnboard() {
-  log('Starting OpenClaw onboard wizard...', 'system');
-  runOpenClaw(['onboard'], null, (code) => {
+// Run onboard (non-interactive with API key)
+function runOnboard(apiKey) {
+  if (!apiKey) {
+    log('Error: API key required for onboard', 'error');
+    return;
+  }
+  
+  log('Running OpenClaw onboard (non-interactive)...', 'system');
+  
+  const args = [
+    'onboard',
+    '--non-interactive',
+    '--accept-risk',
+    '--anthropic-api-key', apiKey,
+    '--mode', 'local',
+  ];
+  
+  runOpenClaw(args, null, (code) => {
+    if (code === 0) {
+      log('OpenClaw configured successfully!', 'success');
+    }
     send({ type: 'onboard_complete', code });
   });
 }
@@ -203,7 +220,7 @@ bridge.channel.on('message', (msg) => {
       break;
 
     case 'onboard':
-      runOnboard();
+      runOnboard(data.apiKey);
       break;
 
     case 'doctor':
