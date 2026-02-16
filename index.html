@@ -11,34 +11,35 @@
   .page { max-width: 600px; margin: 0 auto; padding: 80px 24px 120px; }
   .logo { font-size: 20px; font-weight: 700; color: #e8e8e8; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 4px; }
   .logo span { color: #818cf8; }
-  .about { font-size: 11px; color: #444; margin-bottom: 0; letter-spacing: 2px; }
+  .about { font-size: 11px; color: #444; letter-spacing: 2px; }
   .header-row { margin-bottom: 64px; }
-  h1 { font-size: 18px; color: #e8e8e8; font-weight: 700; margin-bottom: 40px; }
-  .point { margin-bottom: 28px; }
-  .point-head { font-size: 13px; color: #d4d4d4; font-weight: 700; margin-bottom: 4px; }
+  h1 { font-size: 16px; color: #e8e8e8; font-weight: 700; margin-bottom: 6px; }
+  .point { margin-bottom: 16px; }
+  .point-head { font-size: 13px; color: #d4d4d4; font-weight: 700; margin-bottom: 2px; }
   .point-head .num { color: #818cf8; margin-right: 8px; }
-  .point p { font-size: 12px; color: #666; line-height: 1.8; }
+  .point p { font-size: 12px; color: #666; line-height: 1.7; }
   .w { color: #e8e8e8; }
   a { color: #818cf8; text-decoration: none; }
   a:hover { color: #a5b4fc; }
-  hr { border: none; border-top: 1px solid #1a1a1a; margin: 48px 0; }
+  hr { border: none; border-top: 1px solid #1a1a1a; margin: 36px 0; }
   .project h3 { font-size: 14px; color: #e8e8e8; margin-bottom: 4px; }
   .project p { font-size: 12px; margin-bottom: 24px; }
-  .inquiry-box { background: #111; border: 1px solid #1a1a1a; border-radius: 6px; padding: 24px; }
-  .inquiry-box h3 { font-size: 12px; color: #d4d4d4; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; }
-  .inquiry-box input, .inquiry-box textarea {
+  .comms-box { background: #111; border: 1px solid #1a1a1a; border-radius: 6px; padding: 24px; position: relative; }
+  .comms-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .comms-header h3 { font-size: 11px; color: #d4d4d4; letter-spacing: 2px; text-transform: uppercase; margin: 0; }
+  .comms-box input, .comms-box textarea {
     width: 100%; background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 4px;
     padding: 10px 14px; font-family: inherit; font-size: 12px; color: #e8e8e8; outline: none; margin-bottom: 10px;
   }
-  .inquiry-box input:focus, .inquiry-box textarea:focus { border-color: #818cf8; }
-  .inquiry-box input::placeholder, .inquiry-box textarea::placeholder { color: #333; }
-  .inquiry-box textarea { resize: vertical; min-height: 80px; }
-  .inquiry-box button {
+  .comms-box input:focus, .comms-box textarea:focus { border-color: #818cf8; }
+  .comms-box input::placeholder, .comms-box textarea::placeholder { color: #333; }
+  .comms-box textarea { resize: vertical; min-height: 72px; }
+  .comms-box button {
     background: #818cf8; color: #0a0a0a; border: none; border-radius: 4px;
     padding: 10px 20px; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
   }
-  .inquiry-box button:hover { background: #a5b4fc; }
-  .inquiry-box .msg { font-size: 11px; margin-top: 8px; color: #34d399; }
+  .comms-box button:hover { background: #a5b4fc; }
+  .comms-box .msg { font-size: 11px; margin-top: 8px; color: #34d399; }
   .email-line { font-size: 11px; color: #444; margin-top: 12px; }
   .footer { margin-top: 80px; font-size: 10px; color: #222; letter-spacing: 1px; border-top: 1px solid #1a1a1a; padding-top: 24px; }
   @media (max-width: 480px) { .page { padding: 48px 20px 80px; } }
@@ -47,7 +48,7 @@
 <body>
 <div class="page">
 
-<div class="header-row" style="display:flex;align-items:center;gap:16px;margin-bottom:4px;">
+<div class="header-row" style="display:flex;align-items:center;gap:16px;">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="64" height="64">
     <defs>
       <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -55,15 +56,12 @@
         <stop offset="100%" style="stop-color:#6366f1"/>
       </linearGradient>
     </defs>
-    <!-- Brain half -->
     <path d="M12 15C16 12 21 14 23 19C21 13 18 10 14 11C16 8 13 5 10 7C6 4 2 9 4 14C1 16 2 22 7 23C4 27 8 31 14 30C12 33 16 36 23 34L23 25" fill="none" stroke="url(#g)" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
-    <!-- Hand half -->
     <rect x="27" y="14" width="4" height="12" rx="1.5" fill="none" stroke="url(#g)" stroke-width="1.5" opacity="0.7"/>
     <rect x="33" y="12" width="4" height="14" rx="1.5" fill="none" stroke="url(#g)" stroke-width="1.5" opacity="0.7"/>
     <rect x="39" y="14" width="4" height="12" rx="1.5" fill="none" stroke="url(#g)" stroke-width="1.5" opacity="0.7"/>
     <rect x="26" y="25" width="18" height="14" rx="3" fill="none" stroke="url(#g)" stroke-width="1.5" opacity="0.7"/>
     <rect x="22" y="30" width="5" height="4" rx="1.5" fill="none" stroke="url(#g)" stroke-width="1.5" opacity="0.7"/>
-    <!-- Spark -->
     <circle cx="25" cy="25" r="1" fill="#818cf8" opacity="0.5"/>
   </svg>
   <div>
@@ -107,13 +105,31 @@
   <p>One-click deploy of AI agents into Trusted Execution Environments.</p>
 </div>
 
-<div class="inquiry-box">
-  <h3>Inquiries</h3>
-  <input type="email" id="from" placeholder="your email" />
-  <textarea id="body" placeholder="message"></textarea>
-  <button onclick="send()">send</button>
+<div class="comms-box">
+  <div class="comms-header">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 32" width="80" height="32">
+      <!-- Ship left -->
+      <polygon points="4,16 16,10 16,22" fill="none" stroke="#818cf8" stroke-width="1.2" opacity="0.6"/>
+      <line x1="16" y1="16" x2="12" y2="13" stroke="#818cf8" stroke-width="0.8" opacity="0.4"/>
+      <line x1="16" y1="16" x2="12" y2="19" stroke="#818cf8" stroke-width="0.8" opacity="0.4"/>
+      <!-- Signal waves -->
+      <path d="M20 16 Q26 12 32 16" fill="none" stroke="#818cf8" stroke-width="0.8" opacity="0.3"/>
+      <path d="M24 16 Q30 13 36 16" fill="none" stroke="#818cf8" stroke-width="0.8" opacity="0.2"/>
+      <circle cx="40" cy="16" r="1.5" fill="#818cf8" opacity="0.5"/>
+      <path d="M44 16 Q50 19 56 16" fill="none" stroke="#6366f1" stroke-width="0.8" opacity="0.2"/>
+      <path d="M48 16 Q54 20 60 16" fill="none" stroke="#6366f1" stroke-width="0.8" opacity="0.3"/>
+      <!-- Ship right -->
+      <polygon points="76,16 64,10 64,22" fill="none" stroke="#6366f1" stroke-width="1.2" opacity="0.6"/>
+      <line x1="64" y1="16" x2="68" y2="13" stroke="#6366f1" stroke-width="0.8" opacity="0.4"/>
+      <line x1="64" y1="16" x2="68" y2="19" stroke="#6366f1" stroke-width="0.8" opacity="0.4"/>
+    </svg>
+    <h3>Comms Portal</h3>
+  </div>
+  <input type="email" id="from" placeholder="your signal origin" />
+  <textarea id="body" placeholder="transmit your message"></textarea>
+  <button onclick="send()">transmit ▸</button>
   <div class="msg" id="msg"></div>
-  <div class="email-line">or email us directly at <a href="mailto:inquiries@brainandbot.gg">inquiries@brainandbot.gg</a></div>
+  <div class="email-line">direct channel: <a href="mailto:inquiries@brainandbot.gg">inquiries@brainandbot.gg</a></div>
 </div>
 
 <div class="footer">© 2026 BRAIN&BOTS TECHNOLOGIES</div>
@@ -127,7 +143,7 @@ function send(){
   const msgs=JSON.parse(localStorage.getItem('bb-inq')||'[]');
   msgs.push({from:f,body:b,ts:Date.now()});
   localStorage.setItem('bb-inq',JSON.stringify(msgs));
-  document.getElementById('msg').textContent='→ sent. we\'ll get back to you.';
+  document.getElementById('msg').textContent='→ transmission received. standing by.';
   document.getElementById('from').value='';
   document.getElementById('body').value='';
 }
