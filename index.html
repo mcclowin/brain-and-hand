@@ -4,321 +4,117 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Brain&Bots — The Rise of the Bots</title>
-<meta name="description" content="Bots are positive contributors to society. We build with them.">
-<meta property="og:title" content="Brain&Bots — The Rise of the Bots">
-<meta property="og:description" content="Human brain. Bot hands. The bot economy starts here.">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
-
-  :root {
-    --bg: #0a0a0a;
-    --surface: #111;
-    --border: #1a1a1a;
-    --dim: #444;
-    --mid: #666;
-    --text: #999;
-    --bright: #d4d4d4;
-    --white: #e8e8e8;
-    --accent: #818cf8;
-    --accent-glow: #a5b4fc;
-    --green: #34d399;
-    --amber: #fbbf24;
-  }
-
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-
   body {
     font-family: 'JetBrains Mono', monospace;
-    background: var(--bg);
-    color: var(--text);
+    background: #0a0a0a;
+    color: #999;
     min-height: 100vh;
     line-height: 1.7;
-    -webkit-font-smoothing: antialiased;
   }
-
-  body::after {
-    content: '';
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
-    pointer-events: none;
-    z-index: 999;
-  }
-
-  .page { max-width: 680px; margin: 0 auto; padding: 80px 28px 120px; }
-
-  .header { margin-bottom: 72px; }
-  .logo { font-size: 13px; font-weight: 700; color: var(--white); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px; }
-  .logo span { color: var(--accent); }
-  .tagline { font-size: 11px; color: var(--dim); letter-spacing: 1px; }
-
-  .manifesto { margin-bottom: 80px; }
-
-  .chapter {
-    margin-bottom: 64px;
-    padding-bottom: 64px;
-    border-bottom: 1px solid var(--border);
-  }
-  .chapter:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-
-  .chapter-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--white);
-    margin-bottom: 24px;
-    line-height: 1.4;
-  }
-
-  .chapter p {
-    font-size: 13px;
-    color: var(--text);
-    margin-bottom: 16px;
-    line-height: 1.9;
-  }
-  .chapter p:last-child { margin-bottom: 0; }
-
-  .w { color: var(--white); font-weight: 500; }
-
-  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(129,140,248,0.2); transition: all 0.2s; }
-  a:hover { color: var(--accent-glow); border-color: var(--accent-glow); }
-
-  /* ── Project card ── */
-  .section { margin-bottom: 56px; }
-  .section-title {
-    font-size: 10px;
-    color: var(--dim);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .project-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 28px;
-    margin-bottom: 24px;
-  }
-  .project-card h3 {
-    font-size: 16px;
-    color: var(--white);
-    font-weight: 700;
-    margin-bottom: 8px;
-  }
-  .project-card .url {
-    font-size: 12px;
-    color: var(--accent);
-    margin-bottom: 12px;
-  }
-  .project-card p {
-    font-size: 13px;
-    color: var(--text);
-    line-height: 1.8;
-  }
-  .tag-active {
-    display: inline-block;
-    font-size: 10px;
-    padding: 2px 8px;
-    border-radius: 3px;
-    margin-top: 12px;
-    color: var(--green);
-    border: 1px solid rgba(52,211,153,0.2);
-  }
-
-  /* ── Email form ── */
-  .signup {
-    margin-top: 56px;
-  }
-  .signup p {
-    font-size: 13px;
-    color: var(--text);
-    margin-bottom: 20px;
-    line-height: 1.8;
-  }
-  .form-row {
-    display: flex;
-    gap: 12px;
-  }
+  .page { max-width: 600px; margin: 0 auto; padding: 80px 24px 120px; }
+  .logo { font-size: 13px; font-weight: 700; color: #e8e8e8; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 64px; }
+  .logo span { color: #818cf8; }
+  h1 { font-size: 18px; color: #e8e8e8; font-weight: 700; margin-bottom: 32px; }
+  h2 { font-size: 14px; color: #d4d4d4; font-weight: 700; margin: 32px 0 12px; }
+  ul { list-style: none; margin-bottom: 24px; }
+  li { font-size: 13px; padding: 4px 0; }
+  li::before { content: '▸ '; color: #818cf8; }
+  .w { color: #e8e8e8; }
+  a { color: #818cf8; text-decoration: none; }
+  a:hover { color: #a5b4fc; }
+  hr { border: none; border-top: 1px solid #1a1a1a; margin: 48px 0; }
+  .project { margin-bottom: 32px; }
+  .project h3 { font-size: 14px; color: #e8e8e8; margin-bottom: 4px; }
+  .project p { font-size: 12px; }
+  .form-row { display: flex; gap: 12px; margin-top: 20px; }
   .form-row input {
-    flex: 1;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 12px 16px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    color: var(--white);
-    outline: none;
-    transition: border-color 0.2s;
+    flex: 1; background: #111; border: 1px solid #1a1a1a; border-radius: 4px;
+    padding: 12px 16px; font-family: inherit; font-size: 13px; color: #e8e8e8; outline: none;
   }
-  .form-row input::placeholder { color: var(--dim); }
-  .form-row input:focus { border-color: var(--accent); }
+  .form-row input:focus { border-color: #818cf8; }
+  .form-row input::placeholder { color: #444; }
   .form-row button {
-    background: var(--accent);
-    color: #0a0a0a;
-    border: none;
-    border-radius: 4px;
-    padding: 12px 24px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
+    background: #818cf8; color: #0a0a0a; border: none; border-radius: 4px;
+    padding: 12px 24px; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
   }
-  .form-row button:hover { background: var(--accent-glow); }
-  .form-row button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  .form-msg {
-    font-size: 12px;
-    margin-top: 12px;
-    min-height: 20px;
-  }
-  .form-msg.success { color: var(--green); }
-  .form-msg.error { color: #fb7185; }
-
-  .privacy-note {
-    font-size: 10px;
-    color: var(--dim);
-    margin-top: 12px;
-  }
-
-  /* ── Footer ── */
-  .footer {
-    margin-top: 80px;
-    padding-top: 32px;
-    border-top: 1px solid var(--border);
-    font-size: 10px;
-    color: #222;
-    letter-spacing: 1px;
-  }
-
-  @media (max-width: 480px) {
-    .page { padding: 48px 20px 80px; }
-    .chapter-title { font-size: 16px; }
-    .header { margin-bottom: 56px; }
-    .form-row { flex-direction: column; }
-  }
+  .form-row button:hover { background: #a5b4fc; }
+  .msg { font-size: 12px; margin-top: 8px; color: #34d399; }
+  .note { font-size: 10px; color: #333; margin-top: 8px; }
+  .footer { margin-top: 80px; font-size: 10px; color: #222; letter-spacing: 1px; border-top: 1px solid #1a1a1a; padding-top: 24px; }
+  @media (max-width: 480px) { .page { padding: 48px 20px 80px; } .form-row { flex-direction: column; } }
 </style>
 </head>
 <body>
-
 <div class="page">
 
-  <div class="header">
-    <div class="logo">BRAIN<span>&</span>BOTS</div>
-    <div class="tagline">human brain · bot hands · the rise of the bots</div>
-  </div>
+<div class="logo">BRAIN<span>&</span>BOTS</div>
 
-  <div class="manifesto">
+<h1>The Rise of the Bots</h1>
 
-    <div class="chapter">
-      <div class="chapter-title">The Rise of the Bots</div>
-      <p>Bots are positive contributors to society. <span class="w">ChatGPT</span> functions as an MVP of efficiency, saving time and money for many users. Bots are respected and admired in domains like chess, AI sports, and Stockfish endgames. <span class="w">OpenClaw</span> shows extreme adoption velocity among developers.</p>
-    </div>
+<h2>Bots are positive contributors to society</h2>
+<ul>
+  <li>ChatGPT functions as an <span class="w">MVP of efficiency</span>, saving time and money for many users</li>
+  <li>Bots are respected and admired in domains like chess, AI sports, and Stockfish endgames</li>
+  <li>OpenClaw shows <span class="w">extreme adoption velocity</span> among developers</li>
+</ul>
 
-    <div class="chapter">
-      <div class="chapter-title">Bots Given Full Hardware Root Access</div>
-      <p>In the OpenClaw model, the result is not a gadget but <span class="w">an early form of a robot.</span> A phone running an autonomous agent in Termux on a $25 Android device is a robot with no legs. In a Darwinian rise where robots are being birthed and spawned, hard metal devices with AI brains are the <span class="w">first species.</span></p>
-    </div>
+<h2>Bots given full hardware root access</h2>
+<ul>
+  <li>In the OpenClaw model, the result is not a gadget but <span class="w">an early form of a robot</span></li>
+  <li>A phone running an autonomous agent in Termux on a $25 Android is a robot with no legs</li>
+  <li>In a Darwinian rise where robots are birthed and spawned, hard metal devices with AI brains are the <span class="w">first species</span></li>
+</ul>
 
-    <div class="chapter">
-      <div class="chapter-title">The Personal Bot</div>
-      <p>Bots can hold social identity across Facebook, WhatsApp, GitHub, email, and bank accounts. This is the era where bots have <span class="w">memory, soul, and skills</span> to venture into the world.</p>
-    </div>
+<h2>The personal bot</h2>
+<ul>
+  <li>Bots can hold social identity across Facebook, WhatsApp, GitHub, email, and bank accounts</li>
+  <li>This is the era where bots have <span class="w">memory, soul, and skills</span> to venture into the world</li>
+</ul>
 
-    <div class="chapter">
-      <div class="chapter-title">Bots Are Cool</div>
-      <p>Bots are cool and <span class="w">people want to be like them.</span> X.com is bots pretending to be human, while Moldbook is humans pretending to be bots. Agentgram and Molthub are bot-native social surfaces.</p>
-    </div>
+<h2>Bots are cool</h2>
+<ul>
+  <li>Bots are cool and <span class="w">people want to be like them</span></li>
+  <li>X.com is bots pretending to be human, while Moldbook is humans pretending to be bots</li>
+  <li>Agentgram and Molthub are bot-native social surfaces</li>
+</ul>
 
-    <div class="chapter">
-      <div class="chapter-title">The Bot Economy</div>
-      <p>Programmable money is required, which implies crypto. Bot markets, where participants are only bots, are gated by <span class="w">proof of no soul.</span></p>
-    </div>
+<h2>The bot economy</h2>
+<ul>
+  <li>Programmable money is required, which implies <span class="w">crypto</span></li>
+  <li>Bot markets, where participants are only bots, are gated by <span class="w">proof of no soul</span></li>
+</ul>
 
-  </div>
+<hr>
 
-  <!-- ═══ Project ═══ -->
-  <div class="section">
-    <div class="section-title">what we build</div>
-    <div class="project-card">
-      <h3>clawster.run</h3>
-      <div class="url"><a href="https://clawster.run">clawster.run</a></div>
-      <p>One-click deployment of AI agents into Trusted Execution Environments. Your bot runs in hardware-encrypted memory — nobody can read its secrets, not even us.</p>
-      <span class="tag-active">building</span>
-    </div>
-  </div>
-
-  <!-- ═══ Signup ═══ -->
-  <div class="signup">
-    <div class="section-title">get early access</div>
-    <p>We're building the infrastructure for the bot economy. Drop your email to get notified when <span class="w">clawster.run</span> launches.</p>
-    <div class="form-row">
-      <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
-      <button id="submit-btn" onclick="submitEmail()">notify me</button>
-    </div>
-    <div class="form-msg" id="form-msg"></div>
-    <div class="privacy-note">No spam. We'll email you once when it's ready.</div>
-  </div>
-
-  <div class="footer">© 2026 BRAIN&BOTS TECHNOLOGIES</div>
-
+<div class="project">
+  <h3><a href="https://clawster.run">clawster.run</a></h3>
+  <p>One-click deploy of AI agents into Trusted Execution Environments</p>
 </div>
 
+<p style="font-size: 13px;">Get notified when we launch.</p>
+<div class="form-row">
+  <input type="email" id="email" placeholder="you@example.com" />
+  <button onclick="go()">notify me</button>
+</div>
+<div class="msg" id="msg"></div>
+<div class="note">No spam. One email when it's ready.</div>
+
+<div class="footer">© 2026 BRAIN&BOTS TECHNOLOGIES</div>
+
+</div>
 <script>
-function submitEmail() {
-  const email = document.getElementById('email').value.trim();
-  const msg = document.getElementById('form-msg');
-  const btn = document.getElementById('submit-btn');
-
-  if (!email || !email.includes('@')) {
-    msg.textContent = '→ enter a valid email';
-    msg.className = 'form-msg error';
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = 'sending...';
-
-  // Store in localStorage as fallback + send to backend when ready
-  const signups = JSON.parse(localStorage.getItem('bb-signups') || '[]');
-  if (signups.includes(email)) {
-    msg.textContent = '→ you\'re already on the list';
-    msg.className = 'form-msg success';
-    btn.textContent = 'notify me';
-    btn.disabled = false;
-    return;
-  }
-
-  signups.push(email);
-  localStorage.setItem('bb-signups', JSON.stringify(signups));
-
-  // TODO: replace with real API endpoint
-  // fetch('https://clawster.run/api/waitlist', {
-  //   method: 'POST',
-  //   headers: {'Content-Type': 'application/json'},
-  //   body: JSON.stringify({email})
-  // });
-
-  msg.textContent = '→ you\'re in. we\'ll be in touch.';
-  msg.className = 'form-msg success';
-  btn.textContent = '✓ done';
-  document.getElementById('email').value = '';
-
-  setTimeout(() => {
-    btn.textContent = 'notify me';
-    btn.disabled = false;
-  }, 3000);
+function go(){
+  const e=document.getElementById('email').value.trim();
+  if(!e||!e.includes('@'))return;
+  const s=JSON.parse(localStorage.getItem('bb')||'[]');
+  if(!s.includes(e)){s.push(e);localStorage.setItem('bb',JSON.stringify(s));}
+  document.getElementById('msg').textContent='→ you\'re in.';
+  document.getElementById('email').value='';
 }
-
-document.getElementById('email').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') submitEmail();
-});
+document.getElementById('email').addEventListener('keydown',e=>{if(e.key==='Enter')go();});
 </script>
-
 </body>
 </html>
