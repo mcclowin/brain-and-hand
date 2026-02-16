@@ -7,115 +7,106 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: 'JetBrains Mono', monospace;
-    background: #0a0a0a;
-    color: #999;
-    min-height: 100vh;
-    line-height: 1.7;
-  }
+  body { font-family: 'JetBrains Mono', monospace; background: #0a0a0a; color: #999; min-height: 100vh; line-height: 1.7; }
   .page { max-width: 600px; margin: 0 auto; padding: 80px 24px 120px; }
-  .logo { font-size: 13px; font-weight: 700; color: #e8e8e8; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 64px; }
+  .logo { font-size: 13px; font-weight: 700; color: #e8e8e8; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 4px; }
   .logo span { color: #818cf8; }
-  h1 { font-size: 18px; color: #e8e8e8; font-weight: 700; margin-bottom: 32px; }
-  h2 { font-size: 14px; color: #d4d4d4; font-weight: 700; margin: 32px 0 12px; }
-  ul { list-style: none; margin-bottom: 24px; }
-  li { font-size: 13px; padding: 4px 0; }
-  li::before { content: '▸ '; color: #818cf8; }
+  .about { font-size: 11px; color: #666; margin-bottom: 64px; }
+  h1 { font-size: 18px; color: #e8e8e8; font-weight: 700; margin-bottom: 40px; }
+  .point { margin-bottom: 28px; }
+  .point-head { font-size: 13px; color: #d4d4d4; font-weight: 700; margin-bottom: 4px; }
+  .point-head .num { color: #818cf8; margin-right: 8px; }
+  .point p { font-size: 12px; color: #666; line-height: 1.8; }
   .w { color: #e8e8e8; }
   a { color: #818cf8; text-decoration: none; }
   a:hover { color: #a5b4fc; }
   hr { border: none; border-top: 1px solid #1a1a1a; margin: 48px 0; }
-  .project { margin-bottom: 32px; }
   .project h3 { font-size: 14px; color: #e8e8e8; margin-bottom: 4px; }
-  .project p { font-size: 12px; }
-  .form-row { display: flex; gap: 12px; margin-top: 20px; }
-  .form-row input {
-    flex: 1; background: #111; border: 1px solid #1a1a1a; border-radius: 4px;
-    padding: 12px 16px; font-family: inherit; font-size: 13px; color: #e8e8e8; outline: none;
+  .project p { font-size: 12px; margin-bottom: 24px; }
+  .inquiry-box { background: #111; border: 1px solid #1a1a1a; border-radius: 6px; padding: 24px; }
+  .inquiry-box h3 { font-size: 12px; color: #d4d4d4; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; }
+  .inquiry-box input, .inquiry-box textarea {
+    width: 100%; background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 4px;
+    padding: 10px 14px; font-family: inherit; font-size: 12px; color: #e8e8e8; outline: none; margin-bottom: 10px;
   }
-  .form-row input:focus { border-color: #818cf8; }
-  .form-row input::placeholder { color: #444; }
-  .form-row button {
+  .inquiry-box input:focus, .inquiry-box textarea:focus { border-color: #818cf8; }
+  .inquiry-box input::placeholder, .inquiry-box textarea::placeholder { color: #333; }
+  .inquiry-box textarea { resize: vertical; min-height: 80px; }
+  .inquiry-box button {
     background: #818cf8; color: #0a0a0a; border: none; border-radius: 4px;
-    padding: 12px 24px; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+    padding: 10px 20px; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
   }
-  .form-row button:hover { background: #a5b4fc; }
-  .msg { font-size: 12px; margin-top: 8px; color: #34d399; }
-  .note { font-size: 10px; color: #333; margin-top: 8px; }
+  .inquiry-box button:hover { background: #a5b4fc; }
+  .inquiry-box .msg { font-size: 11px; margin-top: 8px; color: #34d399; }
+  .email-line { font-size: 11px; color: #444; margin-top: 12px; }
   .footer { margin-top: 80px; font-size: 10px; color: #222; letter-spacing: 1px; border-top: 1px solid #1a1a1a; padding-top: 24px; }
-  @media (max-width: 480px) { .page { padding: 48px 20px 80px; } .form-row { flex-direction: column; } }
+  @media (max-width: 480px) { .page { padding: 48px 20px 80px; } }
 </style>
 </head>
 <body>
 <div class="page">
 
 <div class="logo">BRAIN<span>&</span>BOTS</div>
-<p style="font-size:11px;color:#666;margin-bottom:64px;">Technology company building solutions for the rise of the bots.</p>
+<div class="about">Technology company building solutions for the rise of the bots.</div>
 
 <h1>The Rise of the Bots</h1>
 
-<h2>Bots are positive contributors to society</h2>
-<ul>
-  <li>ChatGPT functions as an <span class="w">MVP of efficiency</span>, saving time and money for many users</li>
-  <li>Bots are respected and admired in domains like chess, AI sports, and Stockfish endgames</li>
-  <li>OpenClaw shows <span class="w">extreme adoption velocity</span> among developers</li>
-</ul>
+<div class="point">
+  <div class="point-head"><span class="num">I.</span> Bots are positive contributors to society</div>
+  <p>ChatGPT is the MVP of efficiency, saving time and money at scale. Bots are respected in chess, AI sports, and Stockfish endgames. OpenClaw shows extreme adoption velocity among developers.</p>
+</div>
 
-<h2>Bots given full hardware root access</h2>
-<ul>
-  <li>In the OpenClaw model, the result is not a gadget but <span class="w">an early form of a robot</span></li>
-  <li>A phone running an autonomous agent in Termux on a $25 Android is a robot with no legs</li>
-  <li>In a Darwinian rise where robots are birthed and spawned, hard metal devices with AI brains are the <span class="w">first species</span></li>
-</ul>
+<div class="point">
+  <div class="point-head"><span class="num">II.</span> Bots given full hardware root access</div>
+  <p>In the OpenClaw model, the result is not a gadget but an early form of a robot. A $25 Android running an agent in Termux is a robot with no legs. Hard metal devices with AI brains are the first species.</p>
+</div>
 
-<h2>The personal bot</h2>
-<ul>
-  <li>Bots can hold social identity across Facebook, WhatsApp, GitHub, email, and bank accounts</li>
-  <li>This is the era where bots have <span class="w">memory, soul, and skills</span> to venture into the world</li>
-</ul>
+<div class="point">
+  <div class="point-head"><span class="num">III.</span> The personal bot</div>
+  <p>Bots hold social identity across Facebook, WhatsApp, GitHub, email, and bank accounts. This is the era where bots have memory, soul, and skills to venture into the world.</p>
+</div>
 
-<h2>Bots are cool</h2>
-<ul>
-  <li>Bots are cool and <span class="w">people want to be like them</span></li>
-  <li>X.com is bots pretending to be human, while Moldbook is humans pretending to be bots</li>
-  <li>Agentgram and Molthub are bot-native social surfaces</li>
-</ul>
+<div class="point">
+  <div class="point-head"><span class="num">IV.</span> Bots have their own world</div>
+  <p>X.com is bots pretending to be human. Moldbook is humans pretending to be bots. Agentgram and Molthub are bot-native social surfaces.</p>
+</div>
 
-<h2>The bot economy</h2>
-<ul>
-  <li>Programmable money is required, which implies <span class="w">crypto</span></li>
-  <li>Bot markets, where participants are only bots, are gated by <span class="w">proof of no soul</span></li>
-</ul>
+<div class="point">
+  <div class="point-head"><span class="num">V.</span> The bot economy</div>
+  <p>Programmable money is required, which implies crypto. Bot markets where participants are only bots, gated by proof of no soul.</p>
+</div>
 
 <hr>
 
 <div class="project">
   <h3><a href="https://clawster.run">clawster.run</a></h3>
-  <p>One-click deploy of AI agents into Trusted Execution Environments</p>
+  <p>One-click deploy of AI agents into Trusted Execution Environments.</p>
 </div>
 
-<p style="font-size: 13px;">Get notified when we launch.</p>
-<div class="form-row">
-  <input type="email" id="email" placeholder="you@example.com" />
-  <button onclick="go()">notify me</button>
+<div class="inquiry-box">
+  <h3>Inquiries</h3>
+  <input type="email" id="from" placeholder="your email" />
+  <textarea id="body" placeholder="message"></textarea>
+  <button onclick="send()">send</button>
+  <div class="msg" id="msg"></div>
+  <div class="email-line">or email us directly at <a href="mailto:inquiries@brainandbot.gg">inquiries@brainandbot.gg</a></div>
 </div>
-<div class="msg" id="msg"></div>
-<div class="note">No spam. One email when it's ready.</div>
 
-<div class="footer">© 2026 BRAIN&BOTS TECHNOLOGIES · <a href="mailto:inquiries@brainandbot.gg" style="color:#444;">inquiries@brainandbot.gg</a></div>
+<div class="footer">© 2026 BRAIN&BOTS TECHNOLOGIES</div>
 
 </div>
 <script>
-function go(){
-  const e=document.getElementById('email').value.trim();
-  if(!e||!e.includes('@'))return;
-  const s=JSON.parse(localStorage.getItem('bb')||'[]');
-  if(!s.includes(e)){s.push(e);localStorage.setItem('bb',JSON.stringify(s));}
-  document.getElementById('msg').textContent='→ you\'re in.';
-  document.getElementById('email').value='';
+function send(){
+  const f=document.getElementById('from').value.trim();
+  const b=document.getElementById('body').value.trim();
+  if(!f||!f.includes('@')||!b)return;
+  const msgs=JSON.parse(localStorage.getItem('bb-inq')||'[]');
+  msgs.push({from:f,body:b,ts:Date.now()});
+  localStorage.setItem('bb-inq',JSON.stringify(msgs));
+  document.getElementById('msg').textContent='→ sent. we\'ll get back to you.';
+  document.getElementById('from').value='';
+  document.getElementById('body').value='';
 }
-document.getElementById('email').addEventListener('keydown',e=>{if(e.key==='Enter')go();});
 </script>
 </body>
 </html>
